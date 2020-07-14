@@ -1,0 +1,39 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Assessment: {{ screener.full_name }}</h1>
+
+  <p><strong>Nick Name:</strong> {{ screener.short_name }}</p> <!-- author detail link not yet defined -->
+  <p><strong>Disorder:</strong> {{ screener.disorder }}</p>
+
+  <div style="margin-left:20px;margin-top:20px">
+    <h4>Sections:</h4>
+
+    {% for section in screener.content.sections.all %}
+        <p><strong>
+            Title:
+        </strong></p>
+        <p>
+            {{ section.title }}
+        </p>
+
+        <p><strong>
+            Options for each answer:
+        </strong></p>
+
+            {% for answer in section.answers.all %}
+                <p>
+                    {{ answer.title }}  (Value =   {{answer.value}})
+                </p>
+
+
+        {% endfor %}
+        <p><strong> Questions: </strong></p>
+        {% for question in section.questions.all %}
+            <p>
+                {{ question.title }}
+            </p>
+        {% endfor %}
+    {% endfor %}
+  </div>
+{% endblock %}

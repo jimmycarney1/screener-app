@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="129c80f4-f6aa-4daa-b1c1-d95bae879fbf" name="Default Changelist" comment="" />
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="HTML File" />
+        <option value="Python Script" />
+      </list>
+    </option>
+  </component>
+  <component name="ProjectId" id="1eYoFx3TgaSmS3qU1FlHMPiH59G" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="DefaultHtmlFileTemplate" value="HTML File" />
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
+  </component>
+  <component name="RecentsManager">
+    <key name="MoveFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assessments_ui" />
+      <recent name="$PROJECT_DIR$/assessments" />
+      <recent name="$PROJECT_DIR$/assessments_ui/src" />
+    </key>
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$" />
+      <recent name="$PROJECT_DIR$/assessments/migrations" />
+    </key>
+  </component>
+  <component name="ServiceViewManager">
+    <option name="viewStates">
+      <list>
+        <serviceView>
+          <treeState>
+            <expand />
+            <select />
+          </treeState>
+        </serviceView>
+      </list>
+    </option>
+  </component>
+  <component name="SvnConfiguration">
+    <configuration />
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="129c80f4-f6aa-4daa-b1c1-d95bae879fbf" name="Default Changelist" comment="" />
+      <created>1594507786485</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1594507786485</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="-716" y="-901" key="SettingsEditor" timestamp="1594507899084">
+      <screen x="-1185" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="-716" y="-901" key="SettingsEditor/0.0.1440.900/-1185.-1080.1920.1080/735.-1080.1920.1080@-1185.-1080.1920.1080" timestamp="1594507899084" />
+    <state x="-559" y="-778" width="667" height="476" key="find.popup" timestamp="1594692325523">
+      <screen x="-1185" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="-559" y="-778" width="667" height="476" key="find.popup/0.0.1440.900/-1185.-1080.1920.1080/735.-1080.1920.1080@-1185.-1080.1920.1080" timestamp="1594692325523" />
+    <state x="-560" y="-839" width="670" height="676" key="search.everywhere.popup" timestamp="1594519544972">
+      <screen x="-1185" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="-560" y="-839" width="670" height="676" key="search.everywhere.popup/0.0.1440.900/-1185.-1080.1920.1080/735.-1080.1920.1080@-1185.-1080.1920.1080" timestamp="1594519544972" />
+  </component>
+  <component name="XDebuggerManager">
+    <breakpoint-manager>
+      <breakpoints>
+        <line-breakpoint enabled="true" suspend="THREAD" type="python-line">
+          <url>file://$PROJECT_DIR$/assessments/seralizers.py</url>
+          <line>70</line>
+          <option name="timeStamp" value="1" />
+        </line-breakpoint>
+      </breakpoints>
+    </breakpoint-manager>
+  </component>
+</project>

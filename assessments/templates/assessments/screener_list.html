@@ -1,0 +1,16 @@
+{% extends "base_generic.html" %}
+
+{% block content %}
+  <h1>Screener List</h1>
+  {% if screener_list %}
+  <ul>
+    {% for screener in screener_list %}
+      <li>
+        <a href="{{ screener.get_absolute_url }}">{{ screener.full_name }}</a> ({{screener.disorder}})
+      </li>
+    {% endfor %}
+  </ul>
+  {% else %}
+    <p>No Screeners!</p>
+  {% endif %}       
+{% endblock %}
