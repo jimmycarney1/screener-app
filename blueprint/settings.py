@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 """
 
 import os
+import dj_database_url
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
@@ -21,7 +22,6 @@ BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 # SECURITY WARNING: keep the secret key used in production secret!
 # SECRET_KEY = 'k@8qv160ih94c6*p%_tdbkvc!%qlm4w70w6)r=2)3y5*q571ng'
-import os
 SECRET_KEY = os.environ.get('DJANGO_SECRET_KEY', 'k@8qv160ih94c6*p%_tdbkvc!%qlm4w70w6)r=2)3y5*q571ng')
 
 # SECURITY WARNING: don't run with debug turned on in production!
@@ -135,16 +135,23 @@ USE_TZ = True
 
 STATIC_URL = '/static/'
 
+# The absolute path to the directory where collectstatic will collect static files for deployment.
+STATIC_ROOT = os.path.join(BASE_DIR, 'staticfiles')
+
 LOGIN_REDIRECT_URL = '/'
 
 LOGIN_URL = '/accounts/login/'
 
 
 # Okays the front end
-
 CORS_ORIGIN_WHITELIST = [
     'http://localhost:3000',
     'http://localhost:8000',
     'http://localhost:8080',
     'http://127.0.0.1:8000'
     ]
+
+# Heroku: Update database configuration from $DATABASE_URL.
+
+db_from_env = dj_database_url.config(conn_max_age=500)
+DATABASES['default'].update(db_from_env)
