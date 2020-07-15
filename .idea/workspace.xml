@@ -3,7 +3,7 @@
   <component name="ChangeListManager">
     <list default="true" id="129c80f4-f6aa-4daa-b1c1-d95bae879fbf" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/blueprint/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/blueprint/settings.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments/migrations/0003_auto_20200712_0441.py" beforeDir="false" afterPath="$PROJECT_DIR$/assessments/migrations/0003_auto_20200712_0441.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -32,7 +32,7 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
@@ -72,14 +72,18 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="-438" y="-778" key="FileChooserDialogImpl" timestamp="1594771494987">
+      <screen x="-1185" y="-1080" width="1920" height="1080" />
+    </state>
+    <state x="-438" y="-778" key="FileChooserDialogImpl/0.0.1440.900/-1185.-1080.1920.1080/735.-1080.1920.1080@-1185.-1080.1920.1080" timestamp="1594771494987" />
     <state x="-716" y="-901" key="SettingsEditor" timestamp="1594507899084">
       <screen x="-1185" y="-1080" width="1920" height="1080" />
     </state>
     <state x="-716" y="-901" key="SettingsEditor/0.0.1440.900/-1185.-1080.1920.1080/735.-1080.1920.1080@-1185.-1080.1920.1080" timestamp="1594507899084" />
-    <state x="-559" y="-778" width="667" height="476" key="find.popup" timestamp="1594692325523">
+    <state x="-559" y="-778" width="667" height="476" key="find.popup" timestamp="1594771499617">
       <screen x="-1185" y="-1080" width="1920" height="1080" />
     </state>
-    <state x="-559" y="-778" width="667" height="476" key="find.popup/0.0.1440.900/-1185.-1080.1920.1080/735.-1080.1920.1080@-1185.-1080.1920.1080" timestamp="1594692325523" />
+    <state x="-559" y="-778" width="667" height="476" key="find.popup/0.0.1440.900/-1185.-1080.1920.1080/735.-1080.1920.1080@-1185.-1080.1920.1080" timestamp="1594771499617" />
     <state x="-560" y="-839" width="670" height="676" key="search.everywhere.popup" timestamp="1594519544972">
       <screen x="-1185" y="-1080" width="1920" height="1080" />
     </state>
