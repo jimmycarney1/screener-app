@@ -16,25 +16,25 @@ class App extends Component {
     this.onComplete = this.onComplete.bind(this);
   }
 
-  componentDidMount() {
-    fetch("assessments/api/screeners/1")
-      .then(response => {
-        if (response.status > 400) {
-          return this.setState(() => {
-            return { placeholder: "Something went wrong!" };
-          });
-        }
-        return response.json();
-      })
-      .then(data => {
-        this.setState(() => {
-          return {
-            data,
-            loaded: true,
+  // componentDidMount() {
+  //   fetch("assessments/api/screeners/1")
+  //     .then(response => {
+  //       if (response.status > 400) {
+  //         return this.setState(() => {
+  //           return { placeholder: "Something went wrong!" };
+  //         });
+  //       }
+  //       return response.json();
+  //     })
+  //     .then(data => {
+  //       this.setState(() => {
+  //         return {
+  //           data,
+  //           loaded: true,
             
-          };
-        });
-      });
+  //         };
+  //       });
+  //     });
   }
   
   onComplete(survey, options){
@@ -67,8 +67,7 @@ class App extends Component {
         return response.json();
       })
       .then(data => {
-        //REMOVE
-        console.log(data.results)
+
 
         // Loop through response and add surveys that the API returns
         var out_string = "Surveys to take next: "
@@ -77,11 +76,7 @@ class App extends Component {
         }
         else{ 
           for (var survey of data.results){
-            //REMOVE
-            console.log("HERE")
-            console.log(survey)
             out_string = out_string.concat(survey, ', ')
-            console.log(out_string)
           }
         }
         this.setState({response: out_string}
