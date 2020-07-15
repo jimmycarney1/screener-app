@@ -79,6 +79,8 @@ def receive_bds_survey(request):
         user = None
 
         try:
+            # TODO: Implemenet users and screener logic
+            # TODO: Along with auth
             user = request.get('user')
             screener = request.get('screener')
         except Exception:
@@ -113,12 +115,3 @@ def receive_bds_survey(request):
             return Response({'Error': "Not correct format"}, status=status.HTTP_400_BAD_REQUEST)
 
     return Response({'Error': "Not correct format"}, status=status.HTTP_400_BAD_REQUEST)
-
-
-@csrf_exempt
-@api_view(['POST', 'GET'])
-def dummy_test(request):
-    logger.error(request)
-    # This will be a list of assessments for follow up tests
-
-    return Response({'Error': "Not correct format"}, status=status.HTTP_201_CREATED)

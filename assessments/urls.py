@@ -20,6 +20,5 @@ urlpatterns += [
     path('api/', include(router.urls)),
     path('api/api-auth/', include('rest_framework.urls', namespace='rest_framework')),
     re_path(r'^api/screeners/(?P<pk>[\d]+)/$', views.ScreenerInstanceView.as_view(), name='Screener-api'),
-    path(r'api/bpds', views.receive_bds_survey, name='record-bpds'),
-    path(r'apis/bpds', views.dummy_test, name='save-bpds')
+    path(r'api/bpds', views.receive_bds_survey, name='record-bpds')
 ]
