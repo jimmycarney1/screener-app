@@ -54,9 +54,9 @@ class Screener(models.Model):
     def __str__(self):
         return self.full_name
 
-    def get_absolute_url(self):
-        """Returns the url to access a particular instance of the model."""
-        return reverse('screener-documentation', args=[str(self.id)])
+    # def get_absolute_url(self):
+    #     """Returns the url to access a particular instance of the model."""
+    #     return reverse('screener-documentation', args=[str(self.id)])
 
 
 # Define a class for the UserAnswer table
