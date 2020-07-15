@@ -6,7 +6,7 @@ import * as Survey from "survey-react"
 
 Survey
     .StylesManager
-    .applyTheme("bootstrap");
+    .applyTheme("modern");
 
 class App extends Component {
   constructor(props) {
@@ -100,7 +100,7 @@ class App extends Component {
         goNextPageAutomatic: true,
         showNavigationButtons: false,
         pages:[],
-        completedHtml: "<p>Survey Completed!</p>"
+        completedHtml: ""
       
       }
 
