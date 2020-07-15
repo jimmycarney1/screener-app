@@ -6,6 +6,7 @@
       <change beforePath="$PROJECT_DIR$/assessments_ui/src/components/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/src/components/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assessments_ui/static/frontend/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/static/frontend/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assessments_ui/templates/assessments_ui/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/templates/assessments_ui/index.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/blueprint/settings.py" beforeDir="false" afterPath="$PROJECT_DIR$/blueprint/settings.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
