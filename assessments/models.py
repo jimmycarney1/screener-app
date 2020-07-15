@@ -46,6 +46,7 @@ class Content(models.Model):
 
 # Define a class for the Screener table
 class Screener(models.Model):
+    id = models.AutoField(primary_key=True)
     short_name = models.CharField(max_length=100)
     full_name = models.CharField(max_length=100, unique=True)
     disorder = models.CharField(max_length=100)
@@ -54,9 +55,9 @@ class Screener(models.Model):
     def __str__(self):
         return self.full_name
 
-    # def get_absolute_url(self):
-    #     """Returns the url to access a particular instance of the model."""
-    #     return reverse('screener-documentation', args=[str(self.id)])
+    def get_absolute_url(self):
+        """Returns the url to access a particular instance of the model."""
+        return reverse('screener-documentation', args=[str(self.id)])
 
 
 # Define a class for the UserAnswer table
