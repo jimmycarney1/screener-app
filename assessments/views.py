@@ -108,7 +108,7 @@ def receive_bds_survey(request):
                 if domains.get(dom) >= BPDS_THRESHHOLDS.get(dom):
                     return_list.append(BPDS_ASSESSMENTS.get(dom))
 
-            return Response({"results": return_list}, status=status.HTTP_201_CREATED)
+            return Response({"results": list(set(return_list))}, status=status.HTTP_201_CREATED)
 
         except Exception:
             logger.exception("No response data")

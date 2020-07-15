@@ -3,6 +3,18 @@
   <component name="ChangeListManager">
     <list default="true" id="129c80f4-f6aa-4daa-b1c1-d95bae879fbf" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/assessments/views.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/modern.css" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/modern.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/modern.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/modern.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/package.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/survey.css" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/survey.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/survey.min.css" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/survey.min.css" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/survey.react.d.ts" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/survey.react.d.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/survey.react.js" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/survey.react.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/survey.react.min.js" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/node_modules/survey-react/survey.react.min.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments_ui/package-lock.json" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/package-lock.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments_ui/src/components/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/src/components/App.js" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/assessments_ui/static/frontend/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/static/frontend/main.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/blueprint/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/blueprint/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db.sqlite3" beforeDir="false" afterPath="$PROJECT_DIR$/db.sqlite3" afterDir="false" />
     </list>

@@ -17,7 +17,7 @@ class App extends Component {
   }
 
   componentDidMount() {
-    fetch("assessments/api/screeners/1")
+    fetch("http://screener-site.herokuapp.com/assessments/api/screeners/1")
       .then(response => {
         if (response.status > 400) {
           return this.setState(() => {
@@ -58,7 +58,7 @@ class App extends Component {
 
     
     
-    fetch("assessments/api/bpds", requestOptions)
+    fetch("http://screener-site.herokuapp.com/assessments/api/bpds", requestOptions)
       .then(response => {
         if (response.status > 400) {
           return this.setState(() => {
