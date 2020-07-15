@@ -6,7 +6,7 @@ import * as Survey from "survey-react"
 
 Survey
     .StylesManager
-    .applyTheme("modern");
+    .applyTheme("bootstrap");
 
 class App extends Component {
   constructor(props) {
@@ -75,7 +75,7 @@ class App extends Component {
 
 
         // Loop through response and add surveys that the API returns
-        var out_string = "Surveys to take next: "
+        var out_string = "     Surveys to take next: "
         if (data.results.length == 0){
           out_string = "No more surveys to take :)"
         }
