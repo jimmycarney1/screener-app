@@ -16,25 +16,25 @@ class App extends Component {
     this.onComplete = this.onComplete.bind(this);
   }
 
-  // componentDidMount() {
-  //   fetch("assessments/api/screeners/1")
-  //     .then(response => {
-  //       if (response.status > 400) {
-  //         return this.setState(() => {
-  //           return { placeholder: "Something went wrong!" };
-  //         });
-  //       }
-  //       return response.json();
-  //     })
-  //     .then(data => {
-  //       this.setState(() => {
-  //         return {
-  //           data,
-  //           loaded: true,
+  componentDidMount() {
+    fetch("assessments/api/screeners/1")
+      .then(response => {
+        if (response.status > 400) {
+          return this.setState(() => {
+            return { placeholder: "Something went wrong!" };
+          });
+        }
+        return response.json();
+      })
+      .then(data => {
+        this.setState(() => {
+          return {
+            data,
+            loaded: true,
             
-  //         };
-  //       });
-  //     });
+          };
+        });
+      });
   }
   
   onComplete(survey, options){
