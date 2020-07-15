@@ -4,6 +4,10 @@ import { render } from "react-dom";
 import * as Survey from "survey-react"
 
 
+Survey
+    .StylesManager
+    .applyTheme("modern");
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -145,13 +149,11 @@ class App extends Component {
     return (
       
       <div>
-        {this.state.data.full_name}
-        <div>
-          {surveyRender}
+        {surveyRender}
 
-          {this.state.response}
-        </div>
+        {this.state.response}
       </div>
+
     
     );
   }
