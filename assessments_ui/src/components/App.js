@@ -43,6 +43,7 @@ class App extends Component {
     }
     // Loop through survey questions 
     for (var result_answer in survey.data){
+      
       // Add each question in the expected format
       output["answers"].push({
         question_id: result_answer,

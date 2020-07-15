@@ -46,7 +46,6 @@ class Content(models.Model):
 
 # Define a class for the Screener table
 class Screener(models.Model):
-    id = models.AutoField(primary_key=True)
     short_name = models.CharField(max_length=100)
     full_name = models.CharField(max_length=100, unique=True)
     disorder = models.CharField(max_length=100)
