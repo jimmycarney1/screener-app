@@ -24,7 +24,7 @@ The title needs to be smaller
 radio-buttons need be removed (as per requirements).
 
 ### API response
-Due to no requirements for the workflow, response from the API (which surveys to take next) is just printed out onto the webpage.
+Due to no client-site requirements for what to do with the response from the API (which surveys to take next), it is just printed out onto the webpage.
 
 Before production, this needs to be re-formatted, or removed.
 
