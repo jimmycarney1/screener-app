@@ -89,7 +89,7 @@ I created a specific endpoint for this assessment, instead of a general one (ie.
 
 I also used a specific function for this endpoint (using global variables), instead of a generalized class, like the preferred Django workflow.
 
-I used this &quot;anti-pattern&quot; workflow because I do not know if this end result (outputting more assessments to take) will be used again. If this is a specific solution, generalizing it would take up unnecessary space in the database, and add unnecessary tech-debt.
+I used this &quot;anti-pattern&quot; workflow because I do not know if this end result (outputting more assessments to take) will be used again. If this is a unique workflow, generalizing it would take up unnecessary space in the database, and add unnecessary development time.
 
 # Features I would add / other work:
 
