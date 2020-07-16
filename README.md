@@ -9,8 +9,9 @@ I built a client-facing web application that allows a patient to record an asses
 
 # What I left out, due to time constraints / requirements:
 
-## TESTS:
+## Unit Tests:
 This is a very important part of development, and would be desired before production.
+Although at times tests need to take a backseat when a deadline is looming, it is important for tests to be written and maintained for long-term scalability and robustness.
 
 ## UX/Design
 
