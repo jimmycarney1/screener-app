@@ -12,6 +12,7 @@ Survey
     text: 'form-control form-control-lg',
     radiogroup: {
       itemChecked: "hidden",
+      materialDecorator: "hidden"
     }
   } 
 
