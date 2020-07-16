@@ -9,6 +9,9 @@ I built a client-facing web application that allows a patient to record an asses
 
 # What I left out, due to time constraints / requirements:
 
+## TESTS:
+This is a very important part of development, and would be desired before production.
+
 ## UX/Design
 
 ### Mobile: This would be next on my &quot;to-do&quot; list:
@@ -106,6 +109,7 @@ You can view the Homepage, but if you click &quot;List of screeners&quot; you wi
 Put in &quot;jimmy&quot; and &quot;blueprint&quot; as username/password and you will see the list of screeners (and can view the assessment in plain text).
 
 This part of the site exists to prove the backend/security works. However, it should not be considered part of the finished product and would be taken down before production.
+
 
 # Code I&#39;m proud of:
 
