@@ -7,7 +7,7 @@ Standardized clinical assessments are often administered on paper. Patients are 
 # Solution:
 I built a client-facing web application that allows a patient to record an assessment with the convenience of the internet. This allows for timestamps of when the assessment is taken and removes the need to manually upload the assessment to a database, as it will be done as part of the application.
 
-# What I left out, due to time constraints / requirements:
+# What I left out:
 
 ## Unit Tests:
 This is a very important part of development, and would be desired before production.
