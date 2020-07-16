@@ -8,6 +8,13 @@ Survey
     .StylesManager
     .applyTheme("bootstrap");
 
+  var my_css = {
+    text: 'form-control form-control-lg',
+    radiogroup: {
+      itemChecked: "hidden",
+    }
+  } 
+
 class App extends Component {
   constructor(props) {
     super(props);
@@ -140,6 +147,7 @@ class App extends Component {
       var surveyRender = (
         <Survey.Survey
           json = {json_obj}
+          css={my_css}
           showCompletedPage={true}
           onComplete ={this.onComplete}
         />

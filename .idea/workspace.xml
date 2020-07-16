@@ -2,6 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="129c80f4-f6aa-4daa-b1c1-d95bae879fbf" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/assessments_ui/static/assessments_ui/style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assessments_ui/static/frontend/style.css" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/assessments_ui/static/style.css" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assessments_ui/src/components/App.js" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/src/components/App.js" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/assessments_ui/static/frontend/main.js" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/static/frontend/main.js" afterDir="false" />
@@ -35,16 +38,20 @@
     <property name="DefaultHtmlFileTemplate" value="HTML File" />
     <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/.." />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/assessments_ui/static/frontend" />
     <property name="settings.editor.selected.configurable" value="com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable" />
   </component>
   <component name="RecentsManager">
     <key name="MoveFile.RECENT_KEYS">
-      <recent name="$PROJECT_DIR$/assessments_ui" />
-      <recent name="$PROJECT_DIR$/assessments" />
+      <recent name="$PROJECT_DIR$/assessments_ui/static" />
+      <recent name="$PROJECT_DIR$/assessments_ui/static/assessments_ui" />
+      <recent name="$PROJECT_DIR$/assessments_ui/templates/assessments_ui" />
       <recent name="$PROJECT_DIR$/assessments_ui/src" />
+      <recent name="$PROJECT_DIR$/assessments_ui/static/frontend" />
     </key>
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="$PROJECT_DIR$/assessments_ui/static/frontend" />
+      <recent name="$PROJECT_DIR$/assessments_ui/src/components" />
       <recent name="$PROJECT_DIR$" />
       <recent name="$PROJECT_DIR$/assessments/migrations" />
     </key>
