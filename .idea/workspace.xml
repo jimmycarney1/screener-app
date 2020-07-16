@@ -3,10 +3,6 @@
   <component name="ChangeListManager">
     <list default="true" id="129c80f4-f6aa-4daa-b1c1-d95bae879fbf" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/assessments_ui/static/assessments_ui/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assessments_ui/static/frontend/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assessments_ui/static/style.css" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/assessments_ui/templates/assessments_ui/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/assessments_ui/templates/assessments_ui/index.html" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
