@@ -79,7 +79,7 @@ It is a very popular host, with plenty of Django support, Postgres support, and 
 
 Although I did not know this when I chose to set up Heroku, I have found the system to be unstable. I would recommend upgrading the server before production.
 
-I did not use Docker because it did not seem like the upside was worth the tech debt of setting it up. However, with more time this would be my preference, as microservices make for lightweight, stable, and flexible systems.
+I did not use Docker because it did not seem like the upside was worth the tech debt of setting it up. However, with more time this would be considered, as microservices make for lightweight, stable, and flexible systems.
 
 ## Other choices : The BPDS endpoint
 
