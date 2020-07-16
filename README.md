@@ -1,5 +1,5 @@
 # [Link to site](https://screener-site.herokuapp.com/frontend/)
-I would recommend using a computer, as the formatting is a bit better (this is addressed below)
+I would recommend using a computer to view the site, as the formatting is a bit better (this is addressed below)
 
 # Problem:
 Standardized clinical assessments are often administered on paper. Patients are often asked to remember to fill these out in their own time. This leads to poor representation of the patient help. Furthermore, when recorded on paper, there has to be clinical time spent to upload the answers to a database, in order to store and analyze the data on a computer.
