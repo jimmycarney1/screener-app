@@ -1,6 +1,4 @@
-Linkedin:
-
-Link: [https://screener-site.herokuapp.com/frontend/](https://screener-site.herokuapp.com/frontend/)
+## Link: [https://screener-site.herokuapp.com/frontend/](https://screener-site.herokuapp.com/frontend/)
 
 I would recommend using a computer, as the formatting is a bit better (this is addressed below)
 
@@ -117,3 +115,7 @@ Unfortunately, all of the work I&#39;m most proud of does not belong to me.
 To discuss one such project, I developed an image enhancement algorithm. This was used by Garmin in their weather-radar Avionics.
 
 On small planes, communication uses such bad internet that the quality of the radar&#39;s image was unusable, and Garmin opted not to include it as a feature. However, using my algorithm, the quality of the image became very close to as good as the image before it was compressed to be sent. There is a patent in-progress for this algorithm, which was entirely developed by me.
+
+## Resume: https://github.com/jimmycarney1/screener-app/blob/master/Jimmy%20Carney.pdf
+
+## LinkedIn: https://www.linkedin.com/in/jimmy-carney-096564a6/
