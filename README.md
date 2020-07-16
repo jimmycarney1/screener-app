@@ -1,5 +1,4 @@
-# Link:[https://screener-site.herokuapp.com/frontend/](Link to Site)
-
+# [Link to site](https://screener-site.herokuapp.com/frontend/)
 I would recommend using a computer, as the formatting is a bit better (this is addressed below)
 
 # Problem:
