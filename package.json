@@ -1,0 +1,16 @@
+{
+  "name": "jimphi-bach-party",
+  "version": "2.0.0",
+  "private": true,
+  "description": "Jimphi Bachhhhhh Party — Cloudflare Pages site + RSVP API (D1 SQLite)",
+  "scripts": {
+    "db:create": "wrangler d1 create jimphi-rsvp",
+    "db:init": "wrangler d1 execute jimphi-rsvp --remote --file=schema.sql",
+    "db:init:local": "wrangler d1 execute jimphi-rsvp --local --file=schema.sql",
+    "dev": "wrangler pages dev",
+    "deploy": "wrangler pages deploy"
+  },
+  "devDependencies": {
+    "wrangler": "^3.90.0"
+  }
+}

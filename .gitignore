@@ -3,3 +3,7 @@
 
 # Database
 *.sqlite3
+
+# Cloudflare / wrangler / node
+.wrangler/
+node_modules/
