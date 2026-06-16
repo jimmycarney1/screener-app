@@ -3,6 +3,7 @@ name: Deploy Jimphi site to GitHub Pages
 on:
   push:
     branches:
+      - master
       - claude/jimphi-party-website-arwopj
   workflow_dispatch:
 
