@@ -7,3 +7,5 @@
 # Cloudflare / wrangler / node
 .wrangler/
 node_modules/
+
+.dev.vars

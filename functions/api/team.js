@@ -40,15 +40,19 @@ export async function onRequestPost(context) {
 
   let team = data.team;
   if (team === null || team === "" || team === undefined) {
-    team = null;
+    team = null; // unassigned
   } else {
     team = Number(team);
-    if (!Number.isInteger(team) || team < 1 || team > 8) {
-      return json({ ok: false, error: "Team must be 1-8" }, 400);
+    // -1 = "not playing" bucket; 1..8 = real teams
+    if (!Number.isInteger(team) || team === 0 || team < -1 || team > 8) {
+      return json({ ok: false, error: "Invalid team" }, 400);
     }
   }
 
-  if (team !== null) {
+  const isRealTeam = team !== null && team >= 1;
+  const captain = isRealTeam && !!data.captain;
+
+  if (isRealTeam) {
     const row = await env.DB.prepare(
       "SELECT COUNT(*) AS c FROM guests WHERE team = ? AND id <> ?"
     )
@@ -59,6 +63,17 @@ export async function onRequestPost(context) {
     }
   }
 
-  await env.DB.prepare("UPDATE guests SET team = ? WHERE id = ?").bind(team, id).run();
+  if (captain) {
+    // Only one captain per team — clear any existing captain first.
+    await env.DB.prepare(
+      "UPDATE guests SET is_captain = 0 WHERE team = ? AND id <> ?"
+    )
+      .bind(team, id)
+      .run();
+  }
+
+  await env.DB.prepare("UPDATE guests SET team = ?, is_captain = ? WHERE id = ?")
+    .bind(team, captain ? 1 : 0, id)
+    .run();
   return json({ ok: true });
 }
