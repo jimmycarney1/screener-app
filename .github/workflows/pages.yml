@@ -4,9 +4,6 @@ on:
   push:
     branches:
       - claude/jimphi-party-website-arwopj
-    paths:
-      - "site/**"
-      - ".github/workflows/pages.yml"
   workflow_dispatch:
 
 permissions:
