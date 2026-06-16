@@ -39,6 +39,14 @@ npm run db:init:local   # seed a local SQLite copy
 npm run dev             # serves public/ + functions at http://localhost:8788
 ```
 
+## Access / passwords
+- **Front-door site password** (shared, for guests): gates the invite pages via
+  `functions/_middleware.js` + `/api/unlock`, stored as the `SITE_PASSWORD` secret.
+- **Admin password** (just for the host): `/admin` is separately protected by HTTP
+  Basic Auth via the `ADMIN_PASSWORD` secret.
+- Both are encrypted Cloudflare secrets — never in the repo. Rotate with
+  `wrangler pages secret put <NAME> --project-name jimphi-bach-party`.
+
 ## Notes
 - The previous version was a static-only GitHub Pages site; this replaces it with a single Cloudflare app.
 
