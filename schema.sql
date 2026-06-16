@@ -3,6 +3,7 @@ CREATE TABLE IF NOT EXISTS guests (
   id         INTEGER PRIMARY KEY AUTOINCREMENT,
   name       TEXT NOT NULL,
   name_key   TEXT NOT NULL,                 -- normalized name for sign-in matching
+  team       INTEGER,                       -- 1..8 or NULL (unassigned)
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_guests_name_key ON guests(name_key);
