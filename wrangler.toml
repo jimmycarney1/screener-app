@@ -7,4 +7,4 @@ pages_build_output_dir = "public"
 [[d1_databases]]
 binding = "DB"
 database_name = "jimphi-rsvp"
-database_id = "REPLACE_WITH_DATABASE_ID"
+database_id = "3a5fe4ef-f2d5-408b-9cf7-23d5fcd01e25"
