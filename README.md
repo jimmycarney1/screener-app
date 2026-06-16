@@ -40,5 +40,14 @@ npm run dev             # serves public/ + functions at http://localhost:8788
 ```
 
 ## Notes
-- The admin page is **unsecured for now** (password protection is a planned follow-up).
 - The previous version was a static-only GitHub Pages site; this replaces it with a single Cloudflare app.
+
+## TODO / future ideas
+- **Food preferences on the RSVP** — dedicated field(s) for dietary needs / allergies, and
+  (if catered) a per-person meal/protein pick. Schema add is non-destructive:
+  `ALTER TABLE rsvps ADD COLUMN diet TEXT;`
+- **Food ordering** — let guests pre-order for the scheduled dinners
+  (Friday: hibachi 🥢 · Saturday: pizza 🍕), tallied in the admin view.
+- **Old GitHub Pages site** — decide whether to redirect `jimmycarney1.github.io/screener-app`
+  to the Cloudflare site or retire it.
+- **Custom domain** instead of `*.pages.dev`.

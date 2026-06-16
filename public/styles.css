@@ -171,6 +171,16 @@ main {
   min-width: 110px;
 }
 .timeline .activity { font-size: 1.05rem; }
+.timeline .dinner {
+  flex-basis: 100%;
+  margin-left: 110px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--coral);
+}
+@media (max-width: 480px) {
+  .timeline .dinner { margin-left: 0; }
+}
 
 /* Expectations */
 .expectations p { margin-bottom: 1rem; font-size: 1.05rem; }
