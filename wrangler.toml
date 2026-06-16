@@ -1,0 +1,10 @@
+name = "jimphi-bach-party"
+compatibility_date = "2024-11-01"
+pages_build_output_dir = "public"
+
+# D1 (SQLite) database binding. The database_id is filled in after running:
+#   npx wrangler d1 create jimphi-rsvp
+[[d1_databases]]
+binding = "DB"
+database_name = "jimphi-rsvp"
+database_id = "REPLACE_WITH_DATABASE_ID"

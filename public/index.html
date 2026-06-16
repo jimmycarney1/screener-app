@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jimphi Bachhhhhh Party 🏅</title>
+  <meta name="description" content="Jimphi Bachhhhhh Party — Myrtle Beach, April 21–25. Come celebrate our engagement at the games!" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="styles.css" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏅</text></svg>" />
+</head>
+<body>
+  <!-- Flag bunting -->
+  <div class="bunting" aria-hidden="true">
+    <span>🇺🇸</span><span>🇧🇷</span><span>🇯🇲</span><span>🇮🇹</span><span>🇫🇷</span>
+    <span>🇬🇧</span><span>🇨🇦</span><span>🇦🇺</span><span>🇩🇪</span><span>🇯🇵</span>
+    <span>🇲🇽</span><span>🇿🇦</span><span>🇸🇪</span><span>🇰🇷</span><span>🇪🇸</span>
+    <span>🇳🇬</span><span>🇦🇷</span><span>🇳🇱</span><span>🇮🇪</span><span>🇬🇷</span>
+  </div>
+
+  <header class="hero">
+    <div class="rings" aria-label="Olympic rings">
+      <svg viewBox="0 0 200 92" width="180" height="83" role="img">
+        <g fill="none" stroke-width="6">
+          <circle cx="35" cy="30" r="26" stroke="#0085C7"/>
+          <circle cx="100" cy="30" r="26" stroke="#111111"/>
+          <circle cx="165" cy="30" r="26" stroke="#DF0024"/>
+          <circle cx="67" cy="60" r="26" stroke="#F4C300"/>
+          <circle cx="132" cy="60" r="26" stroke="#009F3D"/>
+        </g>
+      </svg>
+    </div>
+
+    <p class="kicker">🔥 The Opening Ceremony 🔥</p>
+    <h1>Jimphi<br /><span class="bach">Bachhhhhh</span><br />Party</h1>
+    <p class="engagement">
+      💍 We&rsquo;re <strong>so excited</strong> to celebrate our engagement
+      with our best friends! 💍
+    </p>
+
+    <div class="hero-facts">
+      <div class="fact">
+        <span class="fact-emoji">📍</span>
+        <span class="fact-label">Host City</span>
+        <span class="fact-value">Myrtle Beach</span>
+      </div>
+      <div class="fact">
+        <span class="fact-emoji">📅</span>
+        <span class="fact-label">The Games</span>
+        <span class="fact-value">April 21&ndash;25</span>
+      </div>
+    </div>
+  </header>
+
+  <main>
+    <section class="card schedule">
+      <h2><span class="medal">🗓️</span> Event Schedule</h2>
+      <ul class="timeline">
+        <li>
+          <span class="day">Thursday</span>
+          <span class="activity">⛳ Golf / 🚤 Boating + 🏖️ Beach</span>
+        </li>
+        <li>
+          <span class="day">Friday</span>
+          <span class="activity">🏅 Individual Olympus</span>
+        </li>
+        <li>
+          <span class="day">Saturday</span>
+          <span class="activity">🏆 Team Olympics</span>
+        </li>
+      </ul>
+    </section>
+
+    <section class="card expectations">
+      <h2><span class="medal">🤝</span> The Athlete&rsquo;s Oath</h2>
+      <p>
+        You are <strong>down to clown</strong> and play games! If you are unable to
+        compete, you don&rsquo;t need to drink for every game &mdash; but there will
+        likely be some need for drinking (at least N/A) to keep games fair.
+      </p>
+      <p>
+        It will be <strong>~8 hours of adult field day meets beer Olympics!</strong>
+      </p>
+      <p>
+        If you&rsquo;re not looking to compete, I&rsquo;d still love for you to come &mdash;
+        but please <strong>let me know ahead of time</strong> for team delegation!
+      </p>
+    </section>
+
+    <section class="card games">
+      <h2><span class="medal">🥇</span> The Events</h2>
+      <div class="game-grid">
+        <div class="game">💦<span>Slip and Slide Relay</span></div>
+        <div class="game">🦛<span>Hungry Hippo Moon Bounce</span></div>
+        <div class="game">🛟<span>Inner Tube Relay</span></div>
+        <div class="game">🔫<span>Laser Tag</span></div>
+        <div class="game">🏐<span>Volleyball</span></div>
+        <div class="game">⛳<span>Putt Putt Relay</span></div>
+      </div>
+      <p class="more">&hellip;and more events to come!</p>
+    </section>
+
+    <!-- RSVP -->
+    <section class="card rsvp" id="rsvp">
+      <h2><span class="medal">📝</span> Claim Your Spot on the Team</h2>
+      <p class="rsvp-intro">Let us know you&rsquo;re coming so we can sort out the rosters!</p>
+
+      <form id="rsvp-form" novalidate>
+        <label class="field">
+          <span class="field-label">Your name</span>
+          <input type="text" name="name" id="name" placeholder="e.g. Jamie Smith" required autocomplete="name" />
+        </label>
+
+        <fieldset class="field">
+          <legend class="field-label">Are you coming?</legend>
+          <div class="choice-row">
+            <label class="choice"><input type="radio" name="coming" value="yes" required /> <span>🎉 Yes, I&rsquo;ll be there!</span></label>
+            <label class="choice"><input type="radio" name="coming" value="no" /> <span>😢 Sadly, can&rsquo;t make it</span></label>
+          </div>
+        </fieldset>
+
+        <div id="coming-details" hidden>
+          <fieldset class="field">
+            <legend class="field-label">Down to compete in the games?</legend>
+            <div class="choice-row">
+              <label class="choice"><input type="radio" name="competing" value="yes" /> <span>🏅 Yes, let&rsquo;s go!</span></label>
+              <label class="choice"><input type="radio" name="competing" value="no" /> <span>🍹 I&rsquo;ll cheer from the sidelines</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field">
+            <legend class="field-label">Which days will you be there?</legend>
+            <div class="choice-row days">
+              <label class="choice"><input type="checkbox" name="days" value="wed" /> <span>Wednesday</span></label>
+              <label class="choice"><input type="checkbox" name="days" value="thu" /> <span>Thursday</span></label>
+              <label class="choice"><input type="checkbox" name="days" value="fri" /> <span>Friday</span></label>
+            </div>
+          </fieldset>
+        </div>
+
+        <label class="field">
+          <span class="field-label">Anything else? <em>(optional)</em></span>
+          <textarea name="note" id="note" rows="2" placeholder="Dietary needs, +1, travel plans…" maxlength="500"></textarea>
+        </label>
+
+        <button type="submit" id="submit-btn">🔥 Light the Torch &mdash; RSVP</button>
+        <p class="form-msg" id="form-msg" role="status" aria-live="polite"></p>
+      </form>
+    </section>
+  </main>
+
+  <footer>
+    <p>🏅 See you in Myrtle Beach &middot; April 21&ndash;25 🍻</p>
+  </footer>
+
+  <script src="app.js"></script>
+</body>
+</html>
