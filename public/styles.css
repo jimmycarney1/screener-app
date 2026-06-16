@@ -178,8 +178,16 @@ main {
   font-weight: 600;
   color: var(--coral);
 }
+.timeline .note-line {
+  flex-basis: 100%;
+  margin-left: 110px;
+  font-size: 0.9rem;
+  font-style: italic;
+  color: #6a7f8c;
+}
 @media (max-width: 480px) {
   .timeline .dinner { margin-left: 0; }
+  .timeline .note-line { margin-left: 0; }
 }
 
 /* Expectations */
