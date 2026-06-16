@@ -1,6 +1,7 @@
 // Cloudflare Pages Function: /api/rsvp
-// POST  -> record an RSVP
-// GET   -> list all RSVPs (used by the admin page; unsecured for now)
+// POST -> record an RSVP (public).
+// Listing RSVPs lives in /admin behind Basic Auth — there is intentionally
+// no public GET here so the roster can't be read without the password.
 
 const DAYS = ["wed", "thu", "fri"];
 
@@ -9,6 +10,11 @@ function json(obj, status = 200) {
     status,
     headers: { "content-type": "application/json" },
   });
+}
+
+// No public read API: GET is explicitly rejected so the roster can't be listed.
+export function onRequestGet() {
+  return json({ error: "Method not allowed" }, 405);
 }
 
 export async function onRequestPost(context) {
@@ -40,18 +46,5 @@ export async function onRequestPost(context) {
     return json({ ok: true });
   } catch (err) {
     return json({ error: "Something went wrong saving your RSVP." }, 500);
-  }
-}
-
-export async function onRequestGet(context) {
-  const { env } = context;
-  try {
-    const { results } = await env.DB.prepare(
-      `SELECT id, name, coming, competing, days, note, created_at
-       FROM rsvps ORDER BY created_at DESC`
-    ).all();
-    return json({ rsvps: results });
-  } catch (err) {
-    return json({ error: "Could not load RSVPs." }, 500);
   }
 }
