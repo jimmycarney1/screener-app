@@ -1,3 +1,15 @@
+// Expandable event cards
+(function () {
+  document.querySelectorAll(".event-head").forEach((head) => {
+    head.addEventListener("click", () => {
+      const body = head.nextElementSibling;
+      const open = head.getAttribute("aria-expanded") === "true";
+      head.setAttribute("aria-expanded", String(!open));
+      body.hidden = open;
+    });
+  });
+})();
+
 (function () {
   const form = document.getElementById("rsvp-form");
   const comingDetails = document.getElementById("coming-details");
