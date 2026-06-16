@@ -39,12 +39,19 @@ npm run db:init:local   # seed a local SQLite copy
 npm run dev             # serves public/ + functions at http://localhost:8788
 ```
 
-## Access / passwords
-- **Front-door site password** (shared, for guests): gates the invite pages via
-  `functions/_middleware.js` + `/api/unlock`, stored as the `SITE_PASSWORD` secret.
-- **Admin password** (just for the host): `/admin` is separately protected by HTTP
-  Basic Auth via the `ADMIN_PASSWORD` secret.
-- Both are encrypted Cloudflare secrets — never in the repo. Rotate with
+## Access / sign-in
+Two gates, in order (both via `functions/_middleware.js`):
+1. **Shared site password** (`SITE_PASSWORD` secret) — `/api/unlock`, sets `jimphi_site` cookie.
+2. **Name sign-in** against the guest list — `/api/signin` matches the typed name
+   (normalized) to a `guests` row and sets a signed `jimphi_guest` cookie. RSVPs are
+   tied to that guest, so the form has no name field.
+
+- **Admin** (`/admin`, `ADMIN_PASSWORD` secret, HTTP Basic Auth): manage the guest list
+  (add/remove via `/api/guests`) and view the roster (invited / responded / coming /
+  competing / arrive / leave).
+- Guest list is seeded from `seed_guests.sql`. Duplicate first names (e.g. two "Ben"s)
+  are allowed; sign-in attaches to a matching guest who hasn't RSVP'd yet.
+- Secrets are encrypted Cloudflare secrets — never in the repo. Rotate with
   `wrangler pages secret put <NAME> --project-name jimphi-bach-party`.
 
 ## Notes

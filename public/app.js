@@ -5,11 +5,18 @@
   const msg = document.getElementById("form-msg");
   const btn = document.getElementById("submit-btn");
 
-  // Show/hide the "details" block based on whether they're coming.
+  // Show who they're signed in as (from the display cookie set at sign-in).
+  const nameMatch = document.cookie.match(/(?:^|;\s*)jimphi_guest_name=([^;]+)/);
+  if (nameMatch) {
+    try {
+      document.getElementById("guest-name").textContent =
+        decodeURIComponent(nameMatch[1]);
+    } catch (_) {}
+  }
+
   function syncDetails() {
     const coming = form.querySelector('input[name="coming"]:checked');
-    const isComing = coming && coming.value === "yes";
-    comingDetails.hidden = !isComing;
+    comingDetails.hidden = !(coming && coming.value === "yes");
   }
   comingRadios.forEach((r) => r.addEventListener("change", syncDetails));
 
@@ -22,29 +29,21 @@
     e.preventDefault();
     setMsg("", "");
 
-    const name = form.name.value.trim();
     const comingEl = form.querySelector('input[name="coming"]:checked');
-    if (!name) {
-      setMsg("Please add your name 🙂", "error");
-      form.name.focus();
-      return;
-    }
     if (!comingEl) {
       setMsg("Let us know if you can make it!", "error");
       return;
     }
-
     const coming = comingEl.value;
     const competingEl = form.querySelector('input[name="competing"]:checked');
-    const days = Array.from(
-      form.querySelectorAll('input[name="days"]:checked')
-    ).map((c) => c.value);
+    const arriveEl = form.querySelector('input[name="arrive"]:checked');
+    const departEl = form.querySelector('input[name="depart"]:checked');
 
     const payload = {
-      name,
       coming,
       competing: coming === "yes" && competingEl ? competingEl.value : null,
-      days: coming === "yes" ? days : [],
+      arrive: coming === "yes" && arriveEl ? arriveEl.value : null,
+      depart: coming === "yes" && departEl ? departEl.value : null,
       note: form.note.value.trim(),
     };
 
@@ -58,11 +57,7 @@
         body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) {
-        throw new Error(data.error || "Request failed");
-      }
-      form.reset();
-      syncDetails();
+      if (!res.ok || !data.ok) throw new Error(data.error || "Request failed");
       setMsg(
         coming === "yes"
           ? "🔥 You're on the roster! See you in Myrtle Beach 🏅"

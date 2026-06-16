@@ -108,13 +108,9 @@
     <section class="card rsvp" id="rsvp">
       <h2><span class="medal">📝</span> Claim Your Spot on the Team</h2>
       <p class="rsvp-intro">Let us know you&rsquo;re coming so we can sort out the rosters!</p>
+      <p class="rsvp-as">RSVPing as <strong id="guest-name">you</strong></p>
 
       <form id="rsvp-form" novalidate>
-        <label class="field">
-          <span class="field-label">Your name</span>
-          <input type="text" name="name" id="name" placeholder="e.g. Jamie Smith" required autocomplete="name" />
-        </label>
-
         <fieldset class="field">
           <legend class="field-label">Are you coming?</legend>
           <div class="choice-row">
@@ -133,18 +129,26 @@
           </fieldset>
 
           <fieldset class="field">
-            <legend class="field-label">Which days will you be there?</legend>
+            <legend class="field-label">When will you arrive?</legend>
             <div class="choice-row days">
-              <label class="choice"><input type="checkbox" name="days" value="wed" /> <span>Wednesday</span></label>
-              <label class="choice"><input type="checkbox" name="days" value="thu" /> <span>Thursday</span></label>
-              <label class="choice"><input type="checkbox" name="days" value="fri" /> <span>Friday</span></label>
+              <label class="choice"><input type="radio" name="arrive" value="wed" /> <span>Wednesday</span></label>
+              <label class="choice"><input type="radio" name="arrive" value="thu" /> <span>Thursday</span></label>
+              <label class="choice"><input type="radio" name="arrive" value="fri" /> <span>Friday</span></label>
+            </div>
+          </fieldset>
+
+          <fieldset class="field">
+            <legend class="field-label">When will you leave?</legend>
+            <div class="choice-row days">
+              <label class="choice"><input type="radio" name="depart" value="sat" /> <span>Saturday</span></label>
+              <label class="choice"><input type="radio" name="depart" value="sun" /> <span>Sunday</span></label>
             </div>
           </fieldset>
         </div>
 
         <label class="field">
           <span class="field-label">Anything else? <em>(optional)</em></span>
-          <textarea name="note" id="note" rows="2" placeholder="Dietary needs, +1, travel plans…" maxlength="500"></textarea>
+          <textarea name="note" id="note" rows="2" placeholder="Dietary needs, travel plans…" maxlength="500"></textarea>
         </label>
 
         <button type="submit" id="submit-btn">🔥 Light the Torch &mdash; RSVP</button>

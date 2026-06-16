@@ -218,7 +218,9 @@ main {
 }
 
 /* RSVP */
-.rsvp-intro { font-size: 1.05rem; margin-bottom: 1.5rem; }
+.rsvp-intro { font-size: 1.05rem; margin-bottom: 0.4rem; }
+.rsvp-as { font-size: 1.05rem; margin-bottom: 1.5rem; color: var(--ocean-deep); }
+.rsvp-as strong { color: var(--coral); }
 #rsvp-form { display: flex; flex-direction: column; gap: 1.3rem; }
 .field { display: flex; flex-direction: column; gap: 0.5rem; border: none; }
 .field-label { font-weight: 600; color: var(--ocean-deep); font-size: 1.02rem; }
