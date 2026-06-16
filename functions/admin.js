@@ -49,7 +49,7 @@ export async function onRequestGet(context) {
   let rows = [];
   try {
     const res = await env.DB.prepare(
-      `SELECT g.id, g.name, g.team,
+      `SELECT g.id, g.name, g.team, g.is_captain,
               r.coming, r.competing, r.arrive, r.depart, r.note, r.updated_at
          FROM guests g
          LEFT JOIN rsvps r ON r.guest_id = g.id
@@ -66,17 +66,28 @@ export async function onRequestGet(context) {
 }
 
 function chip(g) {
-  return `<div class="chip" draggable="true" data-id="${g.id}">${esc(g.name)}</div>`;
+  const cap = g.is_captain ? " captain" : "";
+  const crown = g.is_captain ? '<span class="crown">👑</span>' : "";
+  return `<div class="chip${cap}" draggable="true" data-id="${g.id}">${crown}${esc(g.name)}</div>`;
 }
 
 function column(team, guests) {
-  const chips = guests.map(chip).join("");
-  const label = team === 0 ? "Unassigned" : `Team ${team}`;
-  const counter = team === 0 ? `${guests.length}` : `${guests.length}/${CAP}`;
-  const full = team !== 0 && guests.length >= CAP ? " full" : "";
-  return `<div class="team-col${team === 0 ? " pool" : ""}${full}" data-team="${team === 0 ? "" : team}">
-    <h3>${label} <span class="cnt">${counter}</span></h3>
-    <div class="dropzone">${chips}</div>
+  if (team === 0 || team === -1) {
+    const np = team === -1;
+    return `<div class="team-col pool${np ? " notplaying" : ""}" data-team="${np ? -1 : ""}">
+      <h3>${np ? "🚫 Not Playing" : "Unassigned"} <span class="cnt">${guests.length}</span></h3>
+      <div class="dropzone" data-role="members">${guests.map(chip).join("")}</div>
+    </div>`;
+  }
+  const captain = guests.find((g) => g.is_captain);
+  const members = guests.filter((g) => !g.is_captain);
+  const full = guests.length >= CAP ? " full" : "";
+  return `<div class="team-col${full}" data-team="${team}">
+    <h3>Team ${team} <span class="cnt">${guests.length}/${CAP}</span></h3>
+    <div class="cap-slot dropzone${captain ? " filled" : ""}" data-role="captain">
+      ${captain ? chip(captain) : '<span class="cap-ph">👑 Captain</span>'}
+    </div>
+    <div class="dropzone members" data-role="members">${members.map(chip).join("")}</div>
   </div>`;
 }
 
@@ -103,7 +114,9 @@ function render(rows) {
         !has || r.coming !== "yes" ? "—" : r.competing === "yes" ? "🏅 Yes" : "Spectating";
       const arrive = ARRIVE_LABEL[r.arrive] || "—";
       const depart = DEPART_LABEL[r.depart] || "—";
-      const team = r.team ? `T${r.team}` : "—";
+      let team = "—";
+      if (r.team === -1) team = "Not playing";
+      else if (r.team) team = `T${r.team}${r.is_captain ? " 👑" : ""}`;
       const when = esc((r.updated_at || "").replace("T", " ").slice(0, 16));
 
       return `<tr>
@@ -125,14 +138,19 @@ function render(rows) {
     .join("");
 
   // Team board
-  const byTeam = { 0: [] };
+  const byTeam = { 0: [], "-1": [] };
   TEAMS.forEach((t) => (byTeam[t] = []));
   rows.forEach((r) => {
-    const t = r.team && TEAMS.includes(r.team) ? r.team : 0;
-    byTeam[t].push(r);
+    let k;
+    if (r.team === -1) k = "-1";
+    else if (r.team && TEAMS.includes(r.team)) k = r.team;
+    else k = 0;
+    byTeam[k].push(r);
   });
   const board =
-    column(0, byTeam[0]) + TEAMS.map((t) => column(t, byTeam[t])).join("");
+    column(0, byTeam[0]) +
+    column(-1, byTeam["-1"]) +
+    TEAMS.map((t) => column(t, byTeam[t])).join("");
 
   return `<!DOCTYPE html>
 <html lang="en">
@@ -168,6 +186,8 @@ function render(rows) {
     .board { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.9rem; }
     .team-col { background: var(--sand); border-radius: 1rem; padding: 0.8rem; border: 2px solid transparent; min-height: 90px; }
     .team-col.pool { background: #eef6fb; grid-column: 1 / -1; }
+    .team-col.notplaying { background: #f1eef4; }
+    .team-col.notplaying h3 { color: #7a6b86; }
     .team-col h3 { font-size: 1rem; color: var(--ocean-deep); margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center; }
     .team-col .cnt { font-size: 0.85rem; font-weight: 700; color: var(--ocean); background: #fff; border-radius: 0.6rem; padding: 0.1rem 0.5rem; }
     .team-col.full .cnt { color: var(--coral); }
@@ -175,8 +195,15 @@ function render(rows) {
     .team-col.full.drag-over { border-color: var(--coral); background: #ffe6e3; }
     .dropzone { display: flex; flex-wrap: wrap; gap: 0.4rem; min-height: 40px; }
     .pool .dropzone { min-height: 50px; }
+    .cap-slot { border: 2px dashed #f0c84a; background: #fffaec; border-radius: 0.7rem; padding: 0.4rem;
+      margin-bottom: 0.5rem; min-height: 42px; align-items: center; }
+    .cap-slot.filled { border-style: solid; }
+    .cap-ph { color: #b08a1e; font-size: 0.82rem; font-weight: 600; }
     .chip { background: #fff; border: 2px solid #d8e6ee; border-radius: 0.7rem; padding: 0.35rem 0.7rem;
-      font-weight: 600; font-size: 0.9rem; cursor: grab; user-select: none; box-shadow: 0 2px 5px rgba(0,103,156,0.08); }
+      font-weight: 600; font-size: 0.9rem; cursor: grab; user-select: none; box-shadow: 0 2px 5px rgba(0,103,156,0.08);
+      display: inline-flex; align-items: center; gap: 0.25rem; }
+    .chip.captain { border-color: #f0c84a; background: #fff7e0; }
+    .chip .crown { font-size: 0.85rem; }
     .chip:active { cursor: grabbing; }
     .chip.dragging { opacity: 0.4; }
     .board-msg { min-height: 1.2em; margin-top: 0.8rem; font-weight: 600; color: var(--coral); }
@@ -186,7 +213,7 @@ function render(rows) {
   <main>
     <section class="card">
       <h2><span class="medal">🏟️</span> Team Builder</h2>
-      <p class="hint">Drag a name into a team. Max ${CAP} per team — full teams won't accept more. Saves automatically. (Teams are 1–8 for now; we'll make them countries later.)</p>
+      <p class="hint">Drag a name into a team's roster, into the <b>👑 Captain</b> slot to make them captain, or into <b>🚫 Not Playing</b> for folks sitting out. Max ${CAP} per team (captain included). Saves automatically. (Teams are 1–8 for now; we'll make them countries later.)</p>
       <div class="board" id="board">${board}</div>
       <p class="board-msg" id="board-msg" role="status" aria-live="polite"></p>
     </section>
@@ -222,12 +249,38 @@ function render(rows) {
     let dragId = null;
     let dragEl = null;
 
-    function refreshCounts() {
+    function setCaptain(chip, on) {
+      chip.classList.toggle("captain", on);
+      let crown = chip.querySelector(".crown");
+      if (on && !crown) {
+        crown = document.createElement("span");
+        crown.className = "crown";
+        crown.textContent = "👑";
+        chip.prepend(crown);
+      } else if (!on && crown) {
+        crown.remove();
+      }
+    }
+
+    function refresh() {
       board.querySelectorAll(".team-col").forEach((col) => {
         const isPool = col.classList.contains("pool");
         const n = col.querySelectorAll(".chip").length;
         col.querySelector(".cnt").textContent = isPool ? String(n) : n + "/" + CAP;
         if (!isPool) col.classList.toggle("full", n >= CAP);
+        const cap = col.querySelector(".cap-slot");
+        if (cap) {
+          const hasChip = !!cap.querySelector(".chip");
+          let ph = cap.querySelector(".cap-ph");
+          if (hasChip && ph) ph.remove();
+          if (!hasChip && !ph) {
+            ph = document.createElement("span");
+            ph.className = "cap-ph";
+            ph.textContent = "👑 Captain";
+            cap.appendChild(ph);
+          }
+          cap.classList.toggle("filled", hasChip);
+        }
       });
     }
 
@@ -245,38 +298,62 @@ function render(rows) {
       board.querySelectorAll(".drag-over").forEach((c) => c.classList.remove("drag-over"));
     });
 
-    board.querySelectorAll(".team-col").forEach((col) => {
-      col.addEventListener("dragover", (e) => { e.preventDefault(); col.classList.add("drag-over"); });
-      col.addEventListener("dragleave", () => col.classList.remove("drag-over"));
-      col.addEventListener("drop", async (e) => {
+    board.querySelectorAll(".dropzone").forEach((zone) => {
+      zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drag-over"); });
+      zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
+      zone.addEventListener("drop", async (e) => {
         e.preventDefault();
-        col.classList.remove("drag-over");
+        zone.classList.remove("drag-over");
         if (!dragEl) return;
-        const fromCol = dragEl.closest(".team-col");
-        if (fromCol === col) return;
-        const team = col.dataset.team || null; // "" -> unassigned
-        const isPool = col.classList.contains("pool");
-        const count = col.querySelectorAll(".chip").length;
-        if (!isPool && count >= CAP) { flash("Team " + team + " is full (" + CAP + " max)"); return; }
 
-        const zone = col.querySelector(".dropzone");
-        const placeholder = dragEl;
-        const prevParent = placeholder.parentNode;
-        zone.appendChild(placeholder);
-        refreshCounts();
+        const col = zone.closest(".team-col");
+        const t = col.dataset.team;
+        const team = t === "" ? null : Number(t); // null=unassigned, -1=not playing, 1..8
+        const isRealTeam = team !== null && team >= 1;
+        const wantCaptain = zone.dataset.role === "captain" && isRealTeam;
+        const fromCol = dragEl.closest(".team-col");
+        const inThisTeam = fromCol === col;
+
+        if (isRealTeam && !inThisTeam && col.querySelectorAll(".chip").length >= CAP) {
+          flash("Team " + team + " is full (" + CAP + " max)");
+          return;
+        }
+
+        const prevParent = dragEl.parentNode;
+        const prevCaptain = dragEl.classList.contains("captain");
+
+        // Dropping into an occupied captain slot demotes the current captain.
+        let demoted = null;
+        if (wantCaptain) {
+          const existing = zone.querySelector(".chip");
+          if (existing && existing !== dragEl) {
+            demoted = existing;
+            col.querySelector(".dropzone.members").appendChild(existing);
+            setCaptain(existing, false);
+          }
+        }
+
+        zone.appendChild(dragEl);
+        setCaptain(dragEl, wantCaptain);
+        refresh();
         msg.textContent = "";
 
         try {
           const res = await fetch("/api/team", {
             method: "POST",
             headers: { "content-type": "application/json" },
-            body: JSON.stringify({ id: Number(dragId), team: team ? Number(team) : null }),
+            body: JSON.stringify({ id: Number(dragId), team, captain: wantCaptain }),
           });
           const data = await res.json().catch(() => ({}));
           if (!res.ok || !data.ok) throw new Error(data.error || "Failed");
         } catch (err) {
-          prevParent.appendChild(placeholder); // revert
-          refreshCounts();
+          prevParent.appendChild(dragEl);
+          setCaptain(dragEl, prevCaptain);
+          if (demoted) {
+            col.querySelector(".cap-slot").appendChild(demoted);
+            setCaptain(demoted, true);
+          }
+          refresh();
           flash(err.message || "Couldn't save — try again");
         }
       });
