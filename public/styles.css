@@ -244,6 +244,9 @@ main {
   padding: 0.2rem 0.55rem; border-radius: 0.6rem;
 }
 .event-blurb { font-size: 1.02rem; line-height: 1.55; }
+.event-link { margin-top: 0.6rem; }
+.event-link a { color: var(--coral); font-weight: 700; text-decoration: none; }
+.event-link a:hover { text-decoration: underline; }
 .more {
   text-align: center;
   margin-top: 1.25rem;
