@@ -37,9 +37,13 @@ export async function onRequestPost(context) {
 
   if (action === "add") {
     const name = (form.get("name") || "").toString().trim().slice(0, 120);
+    const email = (form.get("email") || "").toString().trim().slice(0, 200) || null;
+    const phone = (form.get("phone") || "").toString().trim().slice(0, 40) || null;
     if (name) {
-      await env.DB.prepare("INSERT INTO guests (name, name_key) VALUES (?, ?)")
-        .bind(name, normalize(name))
+      await env.DB.prepare(
+        "INSERT INTO guests (name, name_key, email, phone) VALUES (?, ?, ?, ?)"
+      )
+        .bind(name, normalize(name), email, phone)
         .run();
     }
   } else if (action === "delete") {

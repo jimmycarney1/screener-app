@@ -49,7 +49,7 @@ export async function onRequestGet(context) {
   let rows = [];
   try {
     const res = await env.DB.prepare(
-      `SELECT g.id, g.name, g.team, g.is_captain,
+      `SELECT g.id, g.name, g.team, g.is_captain, g.email, g.phone,
               r.coming, r.competing, r.arrive, r.depart, r.note, r.updated_at
          FROM guests g
          LEFT JOIN rsvps r ON r.guest_id = g.id
@@ -157,6 +157,13 @@ function render(rows, todos) {
       else if (r.team) team = `T${r.team}${r.is_captain ? " 👑" : ""}`;
       const when = esc((r.updated_at || "").replace("T", " ").slice(0, 16));
 
+      const email = r.email
+        ? `<a href="mailto:${esc(r.email)}">${esc(r.email)}</a>`
+        : "—";
+      const phone = r.phone
+        ? `<a href="tel:${esc(r.phone)}">${esc(r.phone)}</a>`
+        : "—";
+
       return `<tr>
         <td>${esc(r.name)}</td>
         <td>${status}</td>
@@ -164,6 +171,8 @@ function render(rows, todos) {
         <td>${arrive}</td>
         <td>${depart}</td>
         <td>${team}</td>
+        <td class="contact">${email}</td>
+        <td class="contact">${phone}</td>
         <td>${esc(r.note) || ""}</td>
         <td class="when">${when}</td>
         <td><form method="post" action="/api/guests" onsubmit="return confirm('Remove ${esc(r.name)} from the guest list?');">
@@ -213,7 +222,9 @@ function render(rows, todos) {
     .when { color: #8aa0ad; font-size: 0.8rem; white-space: nowrap; }
     .wrap-table { overflow-x: auto; }
     .add-form { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; flex-wrap: wrap; }
-    .add-form input[type=text] { flex: 1 1 200px; }
+    .add-form input { flex: 1 1 160px; }
+    td.contact { font-size: 0.85rem; max-width: 180px; overflow-wrap: anywhere; }
+    td.contact a { color: var(--ocean); text-decoration: none; }
     .add-form button { font-family: "Fredoka"; font-weight: 600; background: var(--ocean); color: #fff;
       border: none; border-radius: 0.8rem; padding: 0.6rem 1.2rem; cursor: pointer; }
     button.del { background: none; border: none; color: var(--coral); font-weight: 700; cursor: pointer; font-size: 1rem; }
@@ -277,14 +288,16 @@ function render(rows, todos) {
       <form class="add-form" method="post" action="/api/guests">
         <input type="hidden" name="action" value="add" />
         <input type="text" name="name" placeholder="Add a guest's name…" required />
+        <input type="email" name="email" placeholder="Email (optional)" />
+        <input type="tel" name="phone" placeholder="Phone (optional)" />
         <button type="submit">+ Add guest</button>
       </form>
       <div class="wrap-table">
         <table>
           <thead>
-            <tr><th>Name</th><th>Status</th><th>Competing</th><th>Arrive</th><th>Leave</th><th>Team</th><th>Note</th><th>Updated</th><th></th></tr>
+            <tr><th>Name</th><th>Status</th><th>Competing</th><th>Arrive</th><th>Leave</th><th>Team</th><th>Email</th><th>Phone</th><th>Note</th><th>Updated</th><th></th></tr>
           </thead>
-          <tbody>${body || '<tr><td colspan="9">No guests yet — add some above.</td></tr>'}</tbody>
+          <tbody>${body || '<tr><td colspan="11">No guests yet — add some above.</td></tr>'}</tbody>
         </table>
       </div>
     </section>
