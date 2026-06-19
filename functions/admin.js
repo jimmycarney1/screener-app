@@ -60,7 +60,15 @@ export async function onRequestGet(context) {
     return new Response("Could not load data.", { status: 500 });
   }
 
-  return new Response(render(rows), {
+  let todos = [];
+  try {
+    const t = await env.DB.prepare(
+      "SELECT id, text, done FROM todos ORDER BY done ASC, id ASC"
+    ).all();
+    todos = t.results || [];
+  } catch (_) {}
+
+  return new Response(render(rows, todos), {
     headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
   });
 }
@@ -91,7 +99,37 @@ function column(team, guests) {
   </div>`;
 }
 
-function render(rows) {
+function todoSection(todos) {
+  const items = todos
+    .map(
+      (t) => `<li class="todo${t.done ? " done" : ""}">
+        <form method="post" action="/api/todos">
+          <input type="hidden" name="action" value="toggle" />
+          <input type="hidden" name="id" value="${t.id}" />
+          <button class="todo-check" title="${t.done ? "Mark as not done" : "Mark as done"}">${t.done ? "☑" : "☐"}</button>
+        </form>
+        <span class="todo-text">${esc(t.text)}</span>
+        <form method="post" action="/api/todos" onsubmit="return confirm('Delete this item?');">
+          <input type="hidden" name="action" value="delete" />
+          <input type="hidden" name="id" value="${t.id}" />
+          <button class="del" title="Delete">✕</button>
+        </form>
+      </li>`
+    )
+    .join("");
+  const open = todos.filter((t) => !t.done).length;
+  return `<section class="card">
+    <h2><span class="medal">📝</span> Things to Figure Out <span class="cnt">${open} open</span></h2>
+    <form class="add-form" method="post" action="/api/todos">
+      <input type="hidden" name="action" value="add" />
+      <input type="text" name="text" placeholder="Add something to figure out…" required />
+      <button type="submit">+ Add</button>
+    </form>
+    <ul class="todo-list">${items || '<li class="todo"><span class="todo-text">Nothing yet — add the first thing to sort out.</span></li>'}</ul>
+  </section>`;
+}
+
+function render(rows, todos) {
   let invited = rows.length;
   let responded = 0;
   let coming = 0;
@@ -207,10 +245,20 @@ function render(rows) {
     .chip:active { cursor: grabbing; }
     .chip.dragging { opacity: 0.4; }
     .board-msg { min-height: 1.2em; margin-top: 0.8rem; font-weight: 600; color: var(--coral); }
+    h2 .cnt { font-size: 0.8rem; font-weight: 700; color: var(--ocean); background: var(--sand);
+      border-radius: 0.6rem; padding: 0.15rem 0.6rem; }
+    .todo-list { list-style: none; display: flex; flex-direction: column; gap: 0.5rem; }
+    .todo { display: flex; align-items: center; gap: 0.6rem; background: var(--sand);
+      border-radius: 0.8rem; padding: 0.6rem 0.8rem; }
+    .todo-text { flex: 1; font-weight: 500; }
+    .todo.done .todo-text { text-decoration: line-through; color: #8aa0ad; }
+    .todo-check { background: none; border: none; font-size: 1.25rem; cursor: pointer; line-height: 1; color: var(--ocean-deep); }
   </style>
 </head>
 <body>
   <main>
+    ${todoSection(todos)}
+
     <section class="card">
       <h2><span class="medal">🏟️</span> Team Builder</h2>
       <p class="hint">Drag a name into a team's roster, into the <b>👑 Captain</b> slot to make them captain, or into <b>🚫 Not Playing</b> for folks sitting out. Max ${CAP} per team (captain included). Saves automatically. (Teams are 1–8 for now; we'll make them countries later.)</p>
