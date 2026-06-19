@@ -5,6 +5,8 @@ CREATE TABLE IF NOT EXISTS guests (
   name_key   TEXT NOT NULL,                 -- normalized name for sign-in matching
   team       INTEGER,                       -- 1..8 or NULL (unassigned)
   is_captain INTEGER NOT NULL DEFAULT 0,    -- 1 if this guest is their team's captain
+  email      TEXT,                          -- optional
+  phone      TEXT,                          -- optional
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_guests_name_key ON guests(name_key);

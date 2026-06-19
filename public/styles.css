@@ -284,7 +284,7 @@ main {
 .field-label { font-weight: 600; color: var(--ocean-deep); font-size: 1.02rem; }
 .field-label em { color: var(--ink); font-weight: 400; }
 
-input[type="text"], textarea {
+input[type="text"], input[type="email"], input[type="tel"], textarea {
   font-family: inherit;
   font-size: 1rem;
   padding: 0.8rem 1rem;
@@ -295,7 +295,8 @@ input[type="text"], textarea {
   width: 100%;
   resize: vertical;
 }
-input[type="text"]:focus, textarea:focus {
+.contact-fields { gap: 0.6rem; }
+input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, textarea:focus {
   outline: none;
   border-color: var(--ocean);
   box-shadow: 0 0 0 3px rgba(0, 133, 199, 0.15);

@@ -56,6 +56,8 @@
       competing: coming === "yes" && competingEl ? competingEl.value : null,
       arrive: coming === "yes" && arriveEl ? arriveEl.value : null,
       depart: coming === "yes" && departEl ? departEl.value : null,
+      email: form.email.value.trim(),
+      phone: form.phone.value.trim(),
       note: form.note.value.trim(),
     };
 

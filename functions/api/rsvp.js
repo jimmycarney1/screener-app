@@ -74,6 +74,16 @@ export async function onRequestPost(context) {
       .bind(guest.id, guest.name, coming, competing, arrive, depart, note)
       .run();
 
+    // Optional contact info — only overwrite when the guest provides a value.
+    const email = (data.email || "").toString().trim().slice(0, 200);
+    const phone = (data.phone || "").toString().trim().slice(0, 40);
+    if (email) {
+      await env.DB.prepare("UPDATE guests SET email = ? WHERE id = ?").bind(email, guest.id).run();
+    }
+    if (phone) {
+      await env.DB.prepare("UPDATE guests SET phone = ? WHERE id = ?").bind(phone, guest.id).run();
+    }
+
     return json({ ok: true });
   } catch (err) {
     return json({ error: "Something went wrong saving your RSVP." }, 500);
