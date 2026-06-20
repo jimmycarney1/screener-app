@@ -343,6 +343,8 @@ input[type="text"]:focus, input[type="email"]:focus, input[type="tel"]:focus, te
   padding: 0.7rem 0.9rem;
 }
 .opt-out-note strong { color: var(--green); }
+.opt-out-note p { margin: 0; }
+.opt-out-note p + p { margin-top: 0.55rem; }
 
 #submit-btn {
   font-family: "Bungee", sans-serif;
