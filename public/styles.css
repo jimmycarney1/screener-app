@@ -185,9 +185,17 @@ main {
   font-style: italic;
   color: #6a7f8c;
 }
+.timeline .evening {
+  flex-basis: 100%;
+  margin-left: 110px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #6a4bb0;
+}
 @media (max-width: 480px) {
   .timeline .dinner { margin-left: 0; }
   .timeline .note-line { margin-left: 0; }
+  .timeline .evening { margin-left: 0; }
 }
 
 /* Venue */
