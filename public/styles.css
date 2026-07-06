@@ -271,6 +271,11 @@ main {
   background: rgba(0,0,0,0.35); color: #fff;
   padding: 0.2rem 0.55rem; border-radius: 0.6rem;
 }
+.event-photo {
+  width: 100%; height: 210px; object-fit: cover;
+  border-radius: 0.9rem; margin-bottom: 0.9rem; display: block;
+  box-shadow: 0 6px 16px rgba(0,0,0,0.18);
+}
 .event-blurb { font-size: 1.02rem; line-height: 1.55; }
 .event-video { position: relative; aspect-ratio: 16 / 9; border-radius: 0.9rem; overflow: hidden;
   margin-bottom: 0.9rem; background: #000; box-shadow: 0 6px 16px rgba(0,0,0,0.2); }
@@ -281,6 +286,12 @@ main {
   font-weight: 600;
   font-size: 1.1rem;
   color: var(--ocean-deep);
+}
+.photo-credit {
+  text-align: center;
+  margin-top: 0.5rem;
+  font-size: 0.8rem;
+  color: #8aa0ad;
 }
 
 /* RSVP */
