@@ -192,10 +192,24 @@ main {
   font-weight: 600;
   color: #6a4bb0;
 }
+.timeline .theme {
+  flex-basis: 100%;
+  margin-left: 110px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: #c0398b;
+}
+.theme-note {
+  margin-top: 1rem;
+  font-size: 0.85rem;
+  font-style: italic;
+  color: #8aa0ad;
+}
 @media (max-width: 480px) {
   .timeline .dinner { margin-left: 0; }
   .timeline .note-line { margin-left: 0; }
   .timeline .evening { margin-left: 0; }
+  .timeline .theme { margin-left: 0; }
 }
 
 /* Venue */
