@@ -68,7 +68,15 @@ export async function onRequestGet(context) {
     todos = t.results || [];
   } catch (_) {}
 
-  return new Response(render(rows, todos), {
+  let gameIdeas = [];
+  try {
+    const g = await env.DB.prepare(
+      "SELECT id, text, done FROM game_ideas ORDER BY done ASC, id ASC"
+    ).all();
+    gameIdeas = g.results || [];
+  } catch (_) {}
+
+  return new Response(render(rows, todos, gameIdeas), {
     headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
   });
 }
@@ -99,17 +107,18 @@ function column(team, guests) {
   </div>`;
 }
 
-function todoSection(todos) {
-  const items = todos
+function listSection(opts) {
+  const { icon, title, endpoint, items, placeholder, addLabel, openLabel } = opts;
+  const rows = items
     .map(
       (t) => `<li class="todo${t.done ? " done" : ""}">
-        <form method="post" action="/api/todos">
+        <form method="post" action="${endpoint}">
           <input type="hidden" name="action" value="toggle" />
           <input type="hidden" name="id" value="${t.id}" />
           <button class="todo-check" title="${t.done ? "Mark as not done" : "Mark as done"}">${t.done ? "☑" : "☐"}</button>
         </form>
         <span class="todo-text">${esc(t.text)}</span>
-        <form method="post" action="/api/todos" onsubmit="return confirm('Delete this item?');">
+        <form method="post" action="${endpoint}" onsubmit="return confirm('Delete this item?');">
           <input type="hidden" name="action" value="delete" />
           <input type="hidden" name="id" value="${t.id}" />
           <button class="del" title="Delete">✕</button>
@@ -117,19 +126,19 @@ function todoSection(todos) {
       </li>`
     )
     .join("");
-  const open = todos.filter((t) => !t.done).length;
+  const open = items.filter((t) => !t.done).length;
   return `<section class="card">
-    <h2><span class="medal">📝</span> Things to Figure Out <span class="cnt">${open} open</span></h2>
-    <form class="add-form" method="post" action="/api/todos">
+    <h2><span class="medal">${icon}</span> ${title} <span class="cnt">${open} ${openLabel}</span></h2>
+    <form class="add-form" method="post" action="${endpoint}">
       <input type="hidden" name="action" value="add" />
-      <input type="text" name="text" placeholder="Add something to figure out…" required />
+      <input type="text" name="text" placeholder="${addLabel}" required />
       <button type="submit">+ Add</button>
     </form>
-    <ul class="todo-list">${items || '<li class="todo"><span class="todo-text">Nothing yet — add the first thing to sort out.</span></li>'}</ul>
+    <ul class="todo-list">${rows || `<li class="todo"><span class="todo-text">${placeholder}</span></li>`}</ul>
   </section>`;
 }
 
-function render(rows, todos) {
+function render(rows, todos, gameIdeas) {
   let invited = rows.length;
   let responded = 0;
   let coming = 0;
@@ -268,7 +277,9 @@ function render(rows, todos) {
 </head>
 <body>
   <main>
-    ${todoSection(todos)}
+    ${listSection({ icon: "📝", title: "Things to Figure Out", endpoint: "/api/todos", items: todos, placeholder: "Nothing yet — add the first thing to sort out.", addLabel: "Add something to figure out…", openLabel: "open" })}
+
+    ${listSection({ icon: "💡", title: "Game Ideas", endpoint: "/api/gameideas", items: gameIdeas, placeholder: "No ideas yet — drop the first game idea here.", addLabel: "Add a game idea…", openLabel: "to try" })}
 
     <section class="card">
       <h2><span class="medal">🏟️</span> Team Builder</h2>
