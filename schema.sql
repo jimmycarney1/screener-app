@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS rsvps (
   arrive     TEXT,                          -- 'wed' | 'thu' | 'fri' | NULL
   depart     TEXT,                          -- 'sat' | 'sun' | NULL
   note       TEXT,
+  game_ideas TEXT,                          -- guest-suggested games (optional)
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );

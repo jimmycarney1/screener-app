@@ -59,6 +59,7 @@
       email: form.email.value.trim(),
       phone: form.phone.value.trim(),
       note: form.note.value.trim(),
+      gameIdeas: form.gameideas.value.trim(),
     };
 
     btn.disabled = true;

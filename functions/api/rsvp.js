@@ -58,10 +58,11 @@ export async function onRequestPost(context) {
     const depart =
       coming === "yes" && DEPART.includes(data.depart) ? data.depart : null;
     const note = (data.note || "").toString().slice(0, 500);
+    const gameIdeas = (data.gameIdeas || "").toString().slice(0, 500);
 
     await env.DB.prepare(
-      `INSERT INTO rsvps (guest_id, name, coming, competing, arrive, depart, note, updated_at)
-       VALUES (?, ?, ?, ?, ?, ?, ?, datetime('now'))
+      `INSERT INTO rsvps (guest_id, name, coming, competing, arrive, depart, note, game_ideas, updated_at)
+       VALUES (?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
        ON CONFLICT(guest_id) DO UPDATE SET
          name = excluded.name,
          coming = excluded.coming,
@@ -69,9 +70,10 @@ export async function onRequestPost(context) {
          arrive = excluded.arrive,
          depart = excluded.depart,
          note = excluded.note,
+         game_ideas = excluded.game_ideas,
          updated_at = datetime('now')`
     )
-      .bind(guest.id, guest.name, coming, competing, arrive, depart, note)
+      .bind(guest.id, guest.name, coming, competing, arrive, depart, note, gameIdeas)
       .run();
 
     // Optional contact info — only overwrite when the guest provides a value.

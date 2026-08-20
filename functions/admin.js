@@ -50,7 +50,7 @@ export async function onRequestGet(context) {
   try {
     const res = await env.DB.prepare(
       `SELECT g.id, g.name, g.team, g.is_captain, g.email, g.phone,
-              r.coming, r.competing, r.arrive, r.depart, r.note, r.updated_at
+              r.coming, r.competing, r.arrive, r.depart, r.note, r.game_ideas, r.updated_at
          FROM guests g
          LEFT JOIN rsvps r ON r.guest_id = g.id
         ORDER BY g.name COLLATE NOCASE`
@@ -183,6 +183,7 @@ function render(rows, todos, gameIdeas) {
         <td class="contact">${email}</td>
         <td class="contact">${phone}</td>
         <td>${esc(r.note) || ""}</td>
+        <td>${esc(r.game_ideas) || ""}</td>
         <td class="when">${when}</td>
         <td><form method="post" action="/api/guests" onsubmit="return confirm('Remove ${esc(r.name)} from the guest list?');">
           <input type="hidden" name="action" value="delete" />
@@ -306,9 +307,9 @@ function render(rows, todos, gameIdeas) {
       <div class="wrap-table">
         <table>
           <thead>
-            <tr><th>Name</th><th>Status</th><th>Competing</th><th>Arrive</th><th>Leave</th><th>Team</th><th>Email</th><th>Phone</th><th>Note</th><th>Updated</th><th></th></tr>
+            <tr><th>Name</th><th>Status</th><th>Competing</th><th>Arrive</th><th>Leave</th><th>Team</th><th>Email</th><th>Phone</th><th>Note</th><th>Game Ideas</th><th>Updated</th><th></th></tr>
           </thead>
-          <tbody>${body || '<tr><td colspan="11">No guests yet — add some above.</td></tr>'}</tbody>
+          <tbody>${body || '<tr><td colspan="12">No guests yet — add some above.</td></tr>'}</tbody>
         </table>
       </div>
     </section>
