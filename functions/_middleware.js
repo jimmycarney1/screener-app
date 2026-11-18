@@ -70,13 +70,13 @@ export async function onRequest(context) {
   }
   if (!guestOk) {
     return page({
-      heading: "Sign in to the Games 🏅",
+      heading: "Sign in at the Check-In Table 🎽",
       sub: "Type your name exactly as it's on the invite.",
       label: "Your name",
       field: "name",
       type: "text",
       action: "/api/signin",
-      button: "🔥 Enter the Games",
+      button: "🎽 Head to the Field",
       error: "We couldn't find that name on the guest list — check the spelling or ask Jimmy & Phi.",
     });
   }
@@ -91,43 +91,41 @@ function page(o) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
-  <title>Jimphi Bachhhhhh Party 🔒</title>
-  <link href="https://fonts.googleapis.com/css2?family=Bungee&family=Fredoka:wght@400;500;600;700&display=swap" rel="stylesheet" />
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🏅</text></svg>" />
+  <title>JIMPHIeld Day 🔒</title>
+  <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Rubik:wght@400;500;600;700;800&family=Permanent+Marker&display=swap" rel="stylesheet" />
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎽</text></svg>" />
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: "Fredoka", system-ui, sans-serif; min-height: 100vh; display: flex;
-      align-items: center; justify-content: center; padding: 1.5rem; color: #142a3a;
-      background: linear-gradient(180deg, #7fd9e8 0%, #aee9f0 40%, #fff3da 100%); }
-    .gate { background: #fff; border-radius: 1.5rem; padding: 2.5rem 2rem; max-width: 420px; width: 100%;
-      text-align: center; box-shadow: 0 14px 40px rgba(0,103,156,0.22); border-top: 6px solid transparent;
-      border-image: linear-gradient(90deg,#0085c7,#f4c300,#111,#009f3d,#df0024) 1; }
-    h1 { font-family: "Bungee", sans-serif; font-size: 1.45rem; color: #00679c; line-height: 1.15; margin-bottom: 0.4rem; }
-    p.sub { font-weight: 500; margin-bottom: 1.5rem; }
-    label { display: block; text-align: left; font-weight: 600; color: #00679c; margin-bottom: 0.4rem; }
-    input { width: 100%; font-family: inherit; font-size: 1rem; padding: 0.8rem 1rem; border: 2px solid #d8e6ee;
-      border-radius: 0.9rem; background: #fbfdff; }
-    input:focus { outline: none; border-color: #0085c7; box-shadow: 0 0 0 3px rgba(0,133,199,0.15); }
-    button { width: 100%; margin-top: 1.1rem; font-family: "Bungee", sans-serif; font-size: 1.05rem; color: #fff;
-      background: linear-gradient(135deg,#df0024,#ff5a4d); border: none; border-radius: 1rem; padding: 0.9rem 1.5rem;
-      cursor: pointer; box-shadow: 0 8px 20px rgba(223,0,36,0.3); transition: transform .15s ease; }
-    button:hover:not(:disabled) { transform: translateY(-2px); }
+    body { font-family: "Rubik", system-ui, sans-serif; min-height: 100vh; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; padding: 1.5rem; color: #1d2433;
+      background: repeating-linear-gradient(90deg, #4a9a3f 0 70px, #418d37 70px 140px); }
+    .brand { font-family: "Bowlby One", sans-serif; font-size: clamp(2rem, 9vw, 3rem); color: #fbfaf3; line-height: 1;
+      text-shadow: 0 4px 0 #2c6b2a; margin-bottom: 1.25rem; text-align: center; }
+    .brand span { color: #ffc93c; display: inline-block; transform: rotate(-3deg); }
+    .gate { position: relative; max-width: 420px; width: 100%; text-align: center; border-radius: 6px;
+      padding: 2.2rem 1.75rem 1.75rem; box-shadow: 0 14px 28px rgba(0,0,0,0.3);
+      background: repeating-linear-gradient(180deg, #fffdf5 0 31px, #c9dcef 31px 32px); }
+    .gate::before { content: ""; position: absolute; top: -14px; left: 50%; transform: translateX(-50%);
+      width: 120px; height: 34px; border-radius: 8px; background: linear-gradient(180deg, #eef1f4, #a9b1ba 55%, #7d8690);
+      box-shadow: 0 3px 5px rgba(0,0,0,0.3); }
+    h1 { font-family: "Bowlby One", sans-serif; font-weight: 400; font-size: 1.4rem; color: #d62f3c; line-height: 1.15; margin-bottom: 0.4rem; }
+    p.sub { font-weight: 500; margin-bottom: 1.4rem; }
+    label { display: block; text-align: left; font-weight: 800; margin-bottom: 0.35rem; }
+    input { width: 100%; font: inherit; font-size: 1.05rem; padding: 0.55rem 0.2rem; border: none;
+      border-bottom: 2.5px solid #1d2433; background: transparent; color: #1d2433; }
+    input:focus { outline: none; border-color: #1f5fbf; }
+    button { width: 100%; margin-top: 1.3rem; font-family: "Bowlby One", sans-serif; font-size: 1.1rem; color: #fff;
+      background: #d62f3c; border: 3px solid #1d2433; border-radius: 14px; padding: 0.8rem 1.5rem;
+      cursor: pointer; box-shadow: 0 6px 0 #1d2433; transition: transform .1s ease, box-shadow .1s ease; }
+    button:hover:not(:disabled) { transform: translateY(-2px); box-shadow: 0 8px 0 #1d2433; }
+    button:active:not(:disabled) { transform: translateY(4px); box-shadow: 0 2px 0 #1d2433; }
     button:disabled { opacity: .6; cursor: not-allowed; }
-    .msg { min-height: 1.2em; margin-top: 0.8rem; font-weight: 600; color: #df0024; }
-    .rings { margin-bottom: 1rem; }
+    .msg { min-height: 1.2em; margin-top: 0.8rem; font-weight: 700; color: #d62f3c; }
   </style>
 </head>
 <body>
+  <p class="brand"><span>JIMPHI</span>eld Day</p>
   <main class="gate">
-    <div class="rings">
-      <svg viewBox="0 0 200 92" width="130" height="60" role="img" aria-label="Olympic rings">
-        <g fill="none" stroke-width="6">
-          <circle cx="35" cy="30" r="26" stroke="#0085C7"/><circle cx="100" cy="30" r="26" stroke="#111111"/>
-          <circle cx="165" cy="30" r="26" stroke="#DF0024"/><circle cx="67" cy="60" r="26" stroke="#F4C300"/>
-          <circle cx="132" cy="60" r="26" stroke="#009F3D"/>
-        </g>
-      </svg>
-    </div>
     <h1>${o.heading}</h1>
     <p class="sub">${o.sub}</p>
     <form id="f">
