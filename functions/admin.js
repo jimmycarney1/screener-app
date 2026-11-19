@@ -265,6 +265,9 @@ function render(rows, todos, gameIdeas) {
     .chip .crown { font-size: 0.85rem; }
     .chip:active { cursor: grabbing; }
     .chip.dragging { opacity: 0.4; }
+    .chip { -webkit-touch-callout: none; -webkit-user-select: none; touch-action: manipulation; }
+    .drag-ghost { position: fixed; left: 0; top: 0; z-index: 1000; pointer-events: none; opacity: 0.95;
+      box-shadow: 0 10px 24px rgba(0,0,0,0.25); border-color: var(--ocean); }
     .board-msg { min-height: 1.2em; margin-top: 0.8rem; font-weight: 600; color: var(--coral); }
     h2 .cnt { font-size: 0.8rem; font-weight: 700; color: var(--ocean); background: var(--sand);
       border-radius: 0.6rem; padding: 0.15rem 0.6rem; }
@@ -284,7 +287,7 @@ function render(rows, todos, gameIdeas) {
 
     <section class="card">
       <h2><span class="medal">🏟️</span> Team Builder</h2>
-      <p class="hint">Drag a name into a team's roster, into the <b>👑 Captain</b> slot to make them captain, or into <b>🚫 Not Playing</b> for folks sitting out. Max ${CAP} per team (captain included). Saves automatically. (Teams are 1–8 for now; we'll make them countries later.)</p>
+      <p class="hint">Drag a name (on your phone: press and hold, then drag) into a team's roster, into the <b>👑 Captain</b> slot to make them captain, or into <b>🚫 Not Playing</b> for folks sitting out. Max ${CAP} per team (captain included). Saves automatically. (Teams are 1–8 for now; we'll make them countries later.)</p>
       <div class="board" id="board">${board}</div>
       <p class="board-msg" id="board-msg" role="status" aria-live="polite"></p>
     </section>
@@ -374,63 +377,169 @@ function render(rows, todos, gameIdeas) {
     board.querySelectorAll(".dropzone").forEach((zone) => {
       zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drag-over"); });
       zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
-      zone.addEventListener("drop", async (e) => {
+      zone.addEventListener("drop", (e) => {
         e.preventDefault();
         zone.classList.remove("drag-over");
-        if (!dragEl) return;
-
-        const col = zone.closest(".team-col");
-        const t = col.dataset.team;
-        const team = t === "" ? null : Number(t); // null=unassigned, -1=not playing, 1..8
-        const isRealTeam = team !== null && team >= 1;
-        const wantCaptain = zone.dataset.role === "captain" && isRealTeam;
-        const fromCol = dragEl.closest(".team-col");
-        const inThisTeam = fromCol === col;
-
-        if (isRealTeam && !inThisTeam && col.querySelectorAll(".chip").length >= CAP) {
-          flash("Team " + team + " is full (" + CAP + " max)");
-          return;
-        }
-
-        const prevParent = dragEl.parentNode;
-        const prevCaptain = dragEl.classList.contains("captain");
-
-        // Dropping into an occupied captain slot demotes the current captain.
-        let demoted = null;
-        if (wantCaptain) {
-          const existing = zone.querySelector(".chip");
-          if (existing && existing !== dragEl) {
-            demoted = existing;
-            col.querySelector(".dropzone.members").appendChild(existing);
-            setCaptain(existing, false);
-          }
-        }
-
-        zone.appendChild(dragEl);
-        setCaptain(dragEl, wantCaptain);
-        refresh();
-        msg.textContent = "";
-
-        try {
-          const res = await fetch("/api/team", {
-            method: "POST",
-            headers: { "content-type": "application/json" },
-            body: JSON.stringify({ id: Number(dragId), team, captain: wantCaptain }),
-          });
-          const data = await res.json().catch(() => ({}));
-          if (!res.ok || !data.ok) throw new Error(data.error || "Failed");
-        } catch (err) {
-          prevParent.appendChild(dragEl);
-          setCaptain(dragEl, prevCaptain);
-          if (demoted) {
-            col.querySelector(".cap-slot").appendChild(demoted);
-            setCaptain(demoted, true);
-          }
-          refresh();
-          flash(err.message || "Couldn't save — try again");
-        }
+        dropInto(zone);
       });
     });
+
+    async function dropInto(zone) {
+      if (!dragEl) return;
+      const chip = dragEl;
+      const id = dragId;
+
+      const col = zone.closest(".team-col");
+      const t = col.dataset.team;
+      const team = t === "" ? null : Number(t); // null=unassigned, -1=not playing, 1..8
+      const isRealTeam = team !== null && team >= 1;
+      const wantCaptain = zone.dataset.role === "captain" && isRealTeam;
+      const fromCol = chip.closest(".team-col");
+      const inThisTeam = fromCol === col;
+      if (chip.parentNode === zone) return;
+
+      if (isRealTeam && !inThisTeam && col.querySelectorAll(".chip").length >= CAP) {
+        flash("Team " + team + " is full (" + CAP + " max)");
+        return;
+      }
+
+      const prevParent = chip.parentNode;
+      const prevCaptain = chip.classList.contains("captain");
+
+      // Dropping into an occupied captain slot demotes the current captain.
+      let demoted = null;
+      if (wantCaptain) {
+        const existing = zone.querySelector(".chip");
+        if (existing && existing !== chip) {
+          demoted = existing;
+          col.querySelector(".dropzone.members").appendChild(existing);
+          setCaptain(existing, false);
+        }
+      }
+
+      zone.appendChild(chip);
+      setCaptain(chip, wantCaptain);
+      refresh();
+      msg.textContent = "";
+
+      try {
+        const res = await fetch("/api/team", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ id: Number(id), team, captain: wantCaptain }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || "Failed");
+      } catch (err) {
+        prevParent.appendChild(chip);
+        setCaptain(chip, prevCaptain);
+        if (demoted) {
+          col.querySelector(".cap-slot").appendChild(demoted);
+          setCaptain(demoted, true);
+        }
+        refresh();
+        flash(err.message || "Couldn't save — try again");
+      }
+    }
+
+    // ---- Touch drag: press and hold a name, then drag it to a team ----
+    const HOLD_MS = 220;
+    let touch = null; // { chip, ghost, timer, startX, startY, active, x, y, zone }
+
+    function zoneAt(x, y) {
+      const el = document.elementFromPoint(x, y);
+      if (!el) return null;
+      const z = el.closest(".dropzone");
+      if (z) return z;
+      // Anywhere else on a team card counts as its roster.
+      const col = el.closest(".team-col");
+      return col ? col.querySelector(".dropzone.members") || col.querySelector(".dropzone") : null;
+    }
+
+    function startTouchDrag() {
+      const t = touch;
+      t.active = true;
+      dragEl = t.chip;
+      dragId = t.chip.dataset.id;
+      t.chip.classList.add("dragging");
+      const r = t.chip.getBoundingClientRect();
+      const g = t.chip.cloneNode(true);
+      g.className = "chip drag-ghost" + (t.chip.classList.contains("captain") ? " captain" : "");
+      g.style.width = r.width + "px";
+      document.body.appendChild(g);
+      t.ghost = g;
+      t.offX = r.width / 2;
+      t.offY = r.height / 2;
+      moveGhost(t.x, t.y);
+      if (navigator.vibrate) navigator.vibrate(15);
+    }
+
+    function moveGhost(x, y) {
+      const t = touch;
+      t.ghost.style.transform = "translate(" + (x - t.offX) + "px," + (y - t.offY - 28) + "px)";
+      const z = zoneAt(x, y);
+      if (z !== t.zone) {
+        if (t.zone) t.zone.classList.remove("drag-over");
+        if (z) z.classList.add("drag-over");
+        t.zone = z;
+      }
+    }
+
+    let scrollRaf = null;
+    function autoScroll() {
+      if (!touch || !touch.active) { scrollRaf = null; return; }
+      // Only auto-scroll once the finger has actually moved, so pressing a name near the edge doesn't scroll.
+      if (!touch.moved) { scrollRaf = requestAnimationFrame(autoScroll); return; }
+      const edge = 70, h = window.innerHeight;
+      let dy = 0;
+      if (touch.y < edge) dy = -Math.ceil((edge - touch.y) / 6);
+      else if (touch.y > h - edge) dy = Math.ceil((touch.y - (h - edge)) / 6);
+      if (dy) { window.scrollBy(0, dy); moveGhost(touch.x, touch.y); }
+      scrollRaf = requestAnimationFrame(autoScroll);
+    }
+
+    function endTouch(drop) {
+      const t = touch;
+      if (!t) return;
+      clearTimeout(t.timer);
+      touch = null;
+      if (!t.active) return;
+      if (t.ghost) t.ghost.remove();
+      if (t.zone) t.zone.classList.remove("drag-over");
+      t.chip.classList.remove("dragging");
+      if (drop && t.zone) dropInto(t.zone).finally(clearDrag);
+      else clearDrag();
+    }
+    function clearDrag() { dragEl = null; dragId = null; }
+
+    board.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse") return; // mouse uses native drag & drop
+      const chip = e.target.closest(".chip");
+      if (!chip) return;
+      touch = { chip, startX: e.clientX, startY: e.clientY, x: e.clientX, y: e.clientY, active: false, zone: null };
+      touch.timer = setTimeout(() => { if (touch) { startTouchDrag(); autoScroll(); } }, HOLD_MS);
+    });
+
+    document.addEventListener("pointermove", (e) => {
+      if (!touch) return;
+      touch.x = e.clientX; touch.y = e.clientY;
+      if (!touch.active) {
+        // Moved before the hold finished: treat it as a scroll, not a drag.
+        if (Math.hypot(e.clientX - touch.startX, e.clientY - touch.startY) > 10) endTouch(false);
+        return;
+      }
+      if (Math.hypot(e.clientX - touch.startX, e.clientY - touch.startY) > 20) touch.moved = true;
+      moveGhost(e.clientX, e.clientY);
+    });
+    document.addEventListener("pointerup", () => endTouch(true));
+    document.addEventListener("pointercancel", () => {
+      // Browsers fire pointercancel when they start scrolling; keep the drag alive if it already began.
+      if (touch && !touch.active) endTouch(false);
+    });
+    // Block page scrolling while a name is being dragged.
+    document.addEventListener("touchmove", (e) => { if (touch && touch.active) e.preventDefault(); }, { passive: false });
+    document.addEventListener("touchend", () => { if (touch && touch.active) endTouch(true); });
+    board.addEventListener("contextmenu", (e) => { if (e.target.closest(".chip")) e.preventDefault(); });
 
     function flash(text) {
       msg.textContent = text;
