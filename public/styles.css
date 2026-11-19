@@ -405,3 +405,13 @@ footer {
   .fact { min-width: 140px; }
   .choice { flex: 1 1 100%; }
 }
+
+/* RSVP success card (archived Olympic page) */
+#rsvp-form[hidden], .rsvp-done[hidden] { display: none; }
+.rsvp-done { text-align: center; background: var(--sand); border-radius: 1rem; padding: 1.4rem 1.2rem; outline: none; }
+.done-emoji { font-size: 2.4rem; }
+.done-title { font-family: "Bungee", sans-serif; color: var(--ocean-deep); margin-top: 0.3rem; }
+.done-list { list-style: none; text-align: left; margin: 1rem 0; display: grid; gap: 0.35rem; }
+.done-list li { display: flex; justify-content: space-between; gap: 0.75rem; }
+.done-list span { color: #6a7f8c; font-weight: 600; }
+.done-edit { font: inherit; font-weight: 700; cursor: pointer; background: var(--ocean); color: #fff; border: none; border-radius: 0.8rem; padding: 0.6rem 1.2rem; }

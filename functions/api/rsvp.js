@@ -33,9 +33,20 @@ async function guestIdFrom(request, env) {
   return sig === expected ? Number(id) : null;
 }
 
-// No public read API.
-export function onRequestGet() {
-  return json({ error: "Method not allowed" }, 405);
+// GET -> the signed-in guest's own RSVP only (used to show their saved answers).
+// There is still no way to read anyone else's RSVP; the full roster lives behind /admin.
+export async function onRequestGet(context) {
+  const { request, env } = context;
+  const guestId = await guestIdFrom(request, env);
+  if (!guestId) return json({ error: "Please sign in first." }, 401);
+  const row = await env.DB.prepare(
+    `SELECT g.name, g.email, g.phone, r.coming, r.competing, r.arrive, r.depart, r.note, r.game_ideas
+       FROM guests g LEFT JOIN rsvps r ON r.guest_id = g.id WHERE g.id = ?`
+  ).bind(guestId).first();
+  if (!row) return json({ error: "Guest not found." }, 404);
+  return new Response(JSON.stringify({ ok: true, rsvp: row.coming ? row : null, guest: { name: row.name, email: row.email, phone: row.phone } }), {
+    headers: { "content-type": "application/json", "cache-control": "no-store" },
+  });
 }
 
 export async function onRequestPost(context) {

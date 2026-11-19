@@ -593,3 +593,32 @@ footer {
 @media (prefers-reduced-motion: reduce) {
   .pennants span { animation: none; }
 }
+
+/* ---------- RSVP success card ---------- */
+#rsvp-form[hidden], .rsvp-done[hidden] { display: none; }
+.rsvp-done {
+  text-align: center;
+  background: #fff;
+  border: 3px solid var(--ink);
+  border-radius: 14px;
+  padding: 1.4rem 1.2rem 1.3rem;
+  box-shadow: 0 6px 0 var(--ink);
+  outline: none;
+}
+.rsvp-done.pop { animation: done-pop 0.45s cubic-bezier(.2,1.4,.4,1); }
+@keyframes done-pop { from { transform: scale(0.92) rotate(-1deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.done-emoji { font-size: 2.6rem; line-height: 1; }
+.done-title { font-family: "Bowlby One", sans-serif; font-weight: 400; font-size: 1.5rem; color: var(--grass-dark); margin-top: 0.4rem; }
+.done-sub { font-family: "Permanent Marker", cursive; color: var(--blue); font-size: 1.1rem; margin-top: 0.2rem; }
+.done-list { list-style: none; text-align: left; margin: 1.1rem 0 1.2rem; display: grid; gap: 0.4rem; }
+.done-list li { display: flex; gap: 0.75rem; justify-content: space-between; border-bottom: 2px dashed var(--rule); padding-bottom: 0.35rem; }
+.done-list span { color: #6b7280; font-weight: 600; flex: 0 0 auto; }
+.done-list strong { text-align: right; overflow-wrap: anywhere; }
+.done-edit {
+  font: inherit; font-weight: 800; cursor: pointer;
+  background: var(--yellow); color: var(--ink);
+  border: 2.5px solid var(--ink); border-radius: 999px;
+  padding: 0.55rem 1.2rem; box-shadow: 0 4px 0 var(--ink);
+}
+.done-edit:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
+@media (prefers-reduced-motion: reduce) { .rsvp-done.pop { animation: none; } }
