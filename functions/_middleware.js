@@ -91,7 +91,19 @@ function page(o) {
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="robots" content="noindex" />
-  <title>JIMPHIeld Day 🔒</title>
+  <title>JIMPHIeld Day 🎽 — The Jimphi Bachhhhhh Party</title>
+  <meta property="og:type" content="website" />
+  <meta property="og:site_name" content="JIMPHIeld Day" />
+  <meta property="og:title" content="JIMPHIeld Day 🎽 — The Jimphi Bachhhhhh Party" />
+  <meta property="og:description" content="You're invited! Get the details and RSVP inside." />
+  <meta property="og:url" content="https://jimphilympics.com/" />
+  <meta property="og:image" content="https://jimphilympics.com/og.jpg" />
+  <meta property="og:image:width" content="1200" />
+  <meta property="og:image:height" content="630" />
+  <meta property="og:image:alt" content="JIMPHIeld Day — The Jimphi Bachhhhhh Party" />
+  <meta name="twitter:card" content="summary_large_image" />
+  <meta name="twitter:image" content="https://jimphilympics.com/og.jpg" />
+  <meta name="description" content="You're invited! Get the details and RSVP inside." />
   <link href="https://fonts.googleapis.com/css2?family=Bowlby+One&family=Rubik:wght@400;500;600;700;800&family=Permanent+Marker&display=swap" rel="stylesheet" />
   <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎽</text></svg>" />
   <style>
