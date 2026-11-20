@@ -50,9 +50,11 @@ export async function onRequestGet(context) {
   try {
     const res = await env.DB.prepare(
       `SELECT g.id, g.name, g.team, g.is_captain, g.email, g.phone,
-              r.coming, r.competing, r.arrive, r.depart, r.note, r.game_ideas, r.updated_at
+              r.coming, r.competing, r.arrive, r.depart, r.note, r.game_ideas, r.updated_at,
+              b.name AS rsvp_by_name
          FROM guests g
          LEFT JOIN rsvps r ON r.guest_id = g.id
+         LEFT JOIN guests b ON b.id = r.rsvp_by
         ORDER BY g.name COLLATE NOCASE`
     ).all();
     rows = res.results || [];
@@ -157,6 +159,7 @@ function render(rows, todos, gameIdeas) {
         : r.coming === "yes"
         ? '<span class="yes">Coming</span>'
         : '<span class="no">Not coming</span>';
+      const via = has && r.rsvp_by_name ? ' <span class="via">(via ' + esc(r.rsvp_by_name) + ")</span>" : "";
       const compete =
         !has || r.coming !== "yes" ? "—" : r.competing === "yes" ? "🏅 Yes" : "Spectating";
       const arrive = ARRIVE_LABEL[r.arrive] || "—";
@@ -175,7 +178,7 @@ function render(rows, todos, gameIdeas) {
 
       return `<tr>
         <td>${esc(r.name)}</td>
-        <td>${status}</td>
+        <td>${status}${via}</td>
         <td>${compete}</td>
         <td>${arrive}</td>
         <td>${depart}</td>
@@ -229,6 +232,7 @@ function render(rows, todos, gameIdeas) {
     .yes { color: var(--green); font-weight: 700; }
     .no { color: var(--coral); font-weight: 700; }
     .pending { color: #8aa0ad; font-style: italic; }
+    .via { color: #8aa0ad; font-size: 0.8rem; }
     .when { color: #8aa0ad; font-size: 0.8rem; white-space: nowrap; }
     .wrap-table { overflow-x: auto; }
     .add-form { display: flex; gap: 0.6rem; margin-bottom: 1.5rem; flex-wrap: wrap; }

@@ -60,6 +60,7 @@
       phone: form.phone.value.trim(),
       note: form.note.value.trim(),
       gameIdeas: form.gameideas ? form.gameideas.value.trim() : "",
+      plusOnes: Array.from(form.querySelectorAll(".plus-name")).map((i) => i.value.trim()).filter(Boolean),
     };
 
     btn.disabled = true;
@@ -72,11 +73,19 @@
         body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => ({}));
-      if (!res.ok || !data.ok) throw new Error(data.error || "Request failed");
+      if (!res.ok || !data.ok) {
+        if (data.unknown) {
+          markUnknown(data.unknown);
+          throw new Error("We couldn't find " + data.unknown.join(", ") + " on the guest list — check the spelling.");
+        }
+        throw new Error("Hmm, that didn't go through. Please try again.");
+      }
       setMsg("", "");
+      payload.plusSaved = data.plusOnes || [];
+      payload.plusSkipped = data.skipped || [];
       showDone(payload, true);
     } catch (err) {
-      setMsg("Hmm, that didn't go through. Please try again.", "error");
+      setMsg(err.message || "Hmm, that didn't go through. Please try again.", "error");
     } finally {
       btn.disabled = false;
     }
@@ -104,13 +113,17 @@
         row("Arriving", LABEL[r.arrive]) +
         row("Leaving", LABEL[r.depart]) +
         row("Game ideas", r.gameIdeas || r.game_ideas) +
-        row("Note", r.note)
-      : row("Note", r.note);
+        row("Note", r.note) +
+        row("Also RSVP'd for", (r.plusSaved || []).join(", "))
+      : row("Note", r.note) + row("Also RSVP'd for", (r.plusSaved || []).join(", "));
+    const skippedNote = (r.plusSkipped || []).length
+      ? '<p class="done-skip">' + esc(r.plusSkipped.join(", ")) + " already RSVP'd, so we left theirs as is.</p>"
+      : "";
     done.innerHTML =
       '<p class="done-emoji">' + (yes ? "🎉" : "💛") + "</p>" +
       '<h3 class="done-title">' + (yes ? "You're on the roster!" : "Thanks for letting us know") + "</h3>" +
       '<p class="done-sub">' + (yes ? "See you in Myrtle Beach 🏖️" : "We'll miss you — if plans change, just update below.") + "</p>" +
-      (items ? '<ul class="done-list">' + items + "</ul>" : "") +
+      (items ? '<ul class="done-list">' + items + "</ul>" : "") + skippedNote +
       '<button type="button" class="done-edit">✏️ Edit my RSVP</button>';
     done.querySelector(".done-edit").addEventListener("click", () => {
       done.hidden = true;
@@ -126,6 +139,28 @@
       done.scrollIntoView({ behavior: "smooth", block: "center" });
       done.focus({ preventScroll: true });
     }
+  }
+
+  const plusList = document.getElementById("plus-list");
+  const plusAdd = document.getElementById("plus-add");
+  function addPlusInput(value) {
+    const blank = Array.from(plusList.querySelectorAll(".plus-name")).find((i) => !i.value.trim());
+    if (blank && !value) { blank.focus(); return blank; }
+    const inp = blank && value ? blank : document.createElement("input");
+    if (inp !== blank) {
+      inp.type = "text"; inp.className = "plus-name"; inp.placeholder = "Their name"; inp.autocomplete = "off";
+      plusList.appendChild(inp);
+    }
+    if (value) inp.value = value;
+    return inp;
+  }
+  function markUnknown(names) {
+    const bad = names.map((n) => n.toLowerCase());
+    plusList.querySelectorAll(".plus-name").forEach((i) => i.classList.toggle("bad", bad.includes(i.value.trim().toLowerCase())));
+  }
+  if (plusList && plusAdd) {
+    plusAdd.addEventListener("click", () => { if (plusList.children.length < 6) addPlusInput("").focus(); });
+    plusList.addEventListener("input", (e) => e.target.classList.remove("bad"));
   }
 
   function check(name, value) {
@@ -150,6 +185,8 @@
       check("depart", r.depart);
       if (r.note) form.note.value = r.note;
       if (r.game_ideas && form.gameideas) form.gameideas.value = r.game_ideas;
+      if (plusList) (data.plusOnes || []).forEach((n) => addPlusInput(n));
+      r.plusSaved = data.plusOnes || [];
       syncDetails();
       showDone(r, false);
     })

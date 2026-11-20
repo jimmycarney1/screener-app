@@ -22,6 +22,7 @@ CREATE TABLE IF NOT EXISTS rsvps (
   depart     TEXT,                          -- 'sat' | 'sun' | NULL
   note       TEXT,
   game_ideas TEXT,                          -- guest-suggested games (optional)
+  rsvp_by    INTEGER,                       -- guest id who RSVP'd on their behalf (plus ones); NULL = themselves
   created_at TEXT NOT NULL DEFAULT (datetime('now')),
   updated_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
