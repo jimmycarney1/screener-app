@@ -622,3 +622,13 @@ footer {
 }
 .done-edit:active { transform: translateY(3px); box-shadow: 0 1px 0 var(--ink); }
 @media (prefers-reduced-motion: reduce) { .rsvp-done.pop { animation: none; } }
+.rsvp-edit-note {
+  display: inline-block;
+  margin-top: 0.5rem;
+  background: #fff176;
+  padding: 0.35rem 0.7rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  transform: rotate(-0.8deg);
+  box-shadow: 0 3px 6px rgba(0,0,0,0.12);
+}
