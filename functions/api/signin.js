@@ -29,7 +29,11 @@ export async function onRequestPost(context) {
   const { request, env } = context;
   const data = await request.json().catch(() => ({}));
   const password = (data && data.password ? data.password : "").toString();
-  if (!env.SITE_PASSWORD || password !== env.SITE_PASSWORD) {
+  // SITE_PASSWORD plus any extra accepted passwords in SITE_PASSWORD_ALT (comma-separated).
+  const accepted = [env.SITE_PASSWORD, ...(env.SITE_PASSWORD_ALT || "").split(",")]
+    .map((p) => (p || "").trim())
+    .filter(Boolean);
+  if (!env.SITE_PASSWORD || !accepted.includes(password)) {
     return json({ ok: false, error: "Wrong password" }, 401);
   }
   const key = normalize((data && data.name ? data.name : "").toString());
