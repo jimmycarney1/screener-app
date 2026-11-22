@@ -281,9 +281,24 @@
         <h2>📝 Sign-Up Sheet</h2>
         <p class="rsvp-intro">Let us know you&rsquo;re coming so we can sort out the rosters!</p>
         <p class="rsvp-edit-note">✏️ You can edit your RSVP later &mdash; just give your best guess for now!</p>
-        <p class="rsvp-as">RSVPing as <strong id="guest-name">you</strong></p>
+        <p class="rsvp-as" id="rsvp-as" hidden>RSVPing as <strong id="guest-name">you</strong> <button type="button" id="switch-guest" class="switch-guest">Not you?</button></p>
 
-        <form id="rsvp-form" novalidate>
+        <form id="checkin-form" class="checkin" novalidate>
+          <p class="checkin-title">🔑 Check in to RSVP</p>
+          <p class="checkin-sub">Use the password from your invite and your name as it&rsquo;s on the guest list.</p>
+          <label class="field">
+            <span class="field-label">Password</span>
+            <input type="password" id="checkin-password" autocomplete="current-password" required />
+          </label>
+          <label class="field">
+            <span class="field-label">Your name</span>
+            <input type="text" id="checkin-name" autocomplete="name" required />
+          </label>
+          <button type="submit" id="checkin-btn">🎽 Check In</button>
+          <p class="form-msg" id="checkin-msg" role="status" aria-live="polite"></p>
+        </form>
+
+        <form id="rsvp-form" novalidate hidden>
           <fieldset class="field">
             <legend class="field-label">Are you coming?</legend>
             <div class="choice-row">

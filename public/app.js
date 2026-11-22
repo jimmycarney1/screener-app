@@ -73,6 +73,7 @@
         body: JSON.stringify(payload),
       });
       const data = await res.json().catch(() => ({}));
+      if (res.status === 401) { showCheckin(); throw new Error("Please check in again to save your RSVP."); }
       if (!res.ok || !data.ok) {
         if (data.unknown) {
           markUnknown(data.unknown);
@@ -169,26 +170,95 @@
     if (el) el.checked = true;
   }
 
-  // On load: if they've already RSVP'd, prefill the form and show the summary.
-  fetch("/api/rsvp", { headers: { accept: "application/json" } })
-    .then((res) => (res.ok ? res.json() : null))
-    .then((data) => {
-      if (!data || !data.ok) return;
-      const g = data.guest || {};
-      if (g.email && !form.email.value) form.email.value = g.email;
-      if (g.phone && !form.phone.value) form.phone.value = g.phone;
-      const r = data.rsvp;
-      if (!r) return;
-      check("coming", r.coming);
-      check("competing", r.competing);
-      check("arrive", r.arrive);
-      check("depart", r.depart);
-      if (r.note) form.note.value = r.note;
-      if (r.game_ideas && form.gameideas) form.gameideas.value = r.game_ideas;
-      if (plusList) (data.plusOnes || []).forEach((n) => addPlusInput(n));
-      r.plusSaved = data.plusOnes || [];
-      syncDetails();
-      showDone(r, false);
-    })
-    .catch(() => {});
+  // ---- Check-in (password + name) gates the RSVP form; the rest of the site is public ----
+  const checkin = document.getElementById("checkin-form");
+  const rsvpAs = document.getElementById("rsvp-as");
+  const guestNameEl = document.getElementById("guest-name");
+
+  function showCheckin() {
+    if (!checkin) { form.hidden = false; return; }
+    checkin.hidden = false;
+    form.hidden = true;
+    done.hidden = true;
+    if (rsvpAs) rsvpAs.hidden = true;
+  }
+
+  function resetForm() {
+    form.reset();
+    if (plusList) plusList.querySelectorAll(".plus-name").forEach((i, n) => { if (n) i.remove(); else i.value = ""; });
+    syncDetails();
+    setMsg("", "");
+  }
+
+  // Load the signed-in guest's saved RSVP; if nobody is signed in, show the check-in.
+  function loadMine() {
+    return fetch("/api/rsvp", { headers: { accept: "application/json" }, cache: "no-store" })
+      .then((res) => (res.status === 401 ? { signedOut: true } : res.ok ? res.json() : null))
+      .then((data) => {
+        if (!data || data.signedOut || !data.ok) { if (!data || data.signedOut) showCheckin(); return; }
+        if (checkin) checkin.hidden = true;
+        const g = data.guest || {};
+        if (guestNameEl && g.name) guestNameEl.textContent = g.name;
+        if (rsvpAs) rsvpAs.hidden = false;
+        if (g.email && !form.email.value) form.email.value = g.email;
+        if (g.phone && !form.phone.value) form.phone.value = g.phone;
+        const r = data.rsvp;
+        if (!r) { form.hidden = false; done.hidden = true; return; }
+        check("coming", r.coming);
+        check("competing", r.competing);
+        check("arrive", r.arrive);
+        check("depart", r.depart);
+        if (r.note) form.note.value = r.note;
+        if (r.game_ideas && form.gameideas) form.gameideas.value = r.game_ideas;
+        if (plusList) (data.plusOnes || []).forEach((n) => addPlusInput(n));
+        r.plusSaved = data.plusOnes || [];
+        syncDetails();
+        showDone(r, false);
+      })
+      .catch(() => {});
+  }
+
+  if (checkin) {
+    const cmsg = document.getElementById("checkin-msg");
+    const cbtn = document.getElementById("checkin-btn");
+    checkin.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const password = document.getElementById("checkin-password").value;
+      const name = document.getElementById("checkin-name").value.trim();
+      if (!password || !name) { cmsg.textContent = "Enter the password and your name."; cmsg.className = "form-msg error"; return; }
+      cbtn.disabled = true;
+      cmsg.textContent = "Checking…"; cmsg.className = "form-msg";
+      try {
+        const res = await fetch("/api/signin", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ password, name }),
+        });
+        if (res.status === 401) throw new Error("Wrong password — check your invite.");
+        if (res.status === 404) throw new Error("We couldn't find that name on the guest list — check the spelling or ask Jimmy & Phi.");
+        if (!res.ok) throw new Error("Something went wrong. Try again.");
+        cmsg.textContent = ""; cmsg.className = "form-msg";
+        document.getElementById("checkin-password").value = "";
+        resetForm();
+        await loadMine();
+        (form.hidden ? done : form).scrollIntoView({ behavior: "smooth", block: "start" });
+      } catch (err) {
+        cmsg.textContent = err.message; cmsg.className = "form-msg error";
+      } finally {
+        cbtn.disabled = false;
+      }
+    });
+  }
+
+  const switchBtn = document.getElementById("switch-guest");
+  if (switchBtn) {
+    switchBtn.addEventListener("click", async () => {
+      await fetch("/api/signout", { method: "POST" }).catch(() => {});
+      resetForm();
+      showCheckin();
+      document.getElementById("checkin-name").focus();
+    });
+  }
+
+  loadMine();
 })();

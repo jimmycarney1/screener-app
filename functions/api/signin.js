@@ -1,5 +1,6 @@
-// POST /api/signin — match a typed name against the guest list and, on success,
-// set a signed cookie tying the visitor to that guest record.
+// POST /api/signin — check the site password, match a typed name against the
+// guest list and, on success, set a signed cookie tying the visitor to that guest.
+// This is the only gate for RSVPing; the site's pages themselves are public.
 
 function normalize(name) {
   return name.trim().toLowerCase().replace(/\s+/g, " ");
@@ -27,6 +28,10 @@ function json(obj, status = 200, headers = {}) {
 export async function onRequestPost(context) {
   const { request, env } = context;
   const data = await request.json().catch(() => ({}));
+  const password = (data && data.password ? data.password : "").toString();
+  if (!env.SITE_PASSWORD || password !== env.SITE_PASSWORD) {
+    return json({ ok: false, error: "Wrong password" }, 401);
+  }
   const key = normalize((data && data.name ? data.name : "").toString());
   if (!key) return json({ ok: false, error: "Please enter your name." }, 400);
 
