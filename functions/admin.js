@@ -1,6 +1,8 @@
 // Cloudflare Pages Function: /admin
-// Server-rendered guest list, RSVP roster, and drag-and-drop team builder.
+// Server-rendered guest list, RSVP roster, drag-and-drop team builder, and room assignments.
 // Gated by HTTP Basic Auth (ADMIN_PASSWORD).
+
+import { BUILDINGS, ROOMS, ROOM_CAP } from "../lib/rooms.js";
 
 const REALM = "Jimphi Admin";
 const ARRIVE_LABEL = { wed: "Wed", thu: "Thu", fri: "Fri" };
@@ -49,7 +51,7 @@ export async function onRequestGet(context) {
   let rows = [];
   try {
     const res = await env.DB.prepare(
-      `SELECT g.id, g.name, g.team, g.is_captain, g.email, g.phone,
+      `SELECT g.id, g.name, g.team, g.is_captain, g.email, g.phone, g.room,
               r.coming, r.competing, r.arrive, r.depart, r.note, r.game_ideas, r.updated_at,
               b.name AS rsvp_by_name
          FROM guests g
@@ -78,7 +80,13 @@ export async function onRequestGet(context) {
     gameIdeas = g.results || [];
   } catch (_) {}
 
-  return new Response(render(rows, todos, gameIdeas), {
+  const roomCaps = {};
+  try {
+    const c = await env.DB.prepare("SELECT room, cap FROM room_caps").all();
+    (c.results || []).forEach((r) => (roomCaps[r.room] = r.cap));
+  } catch (_) {}
+
+  return new Response(render(rows, todos, gameIdeas, roomCaps), {
     headers: { "content-type": "text/html; charset=utf-8", "cache-control": "no-store" },
   });
 }
@@ -140,7 +148,84 @@ function listSection(opts) {
   </section>`;
 }
 
-function render(rows, todos, gameIdeas) {
+const ST_ICON = { yes: "✅", none: "⏳", no: "❌" };
+
+function rsvpState(r) {
+  return r.coming === "yes" ? "yes" : r.coming === "no" ? "no" : "none";
+}
+
+function roomChip(r) {
+  const st = rsvpState(r);
+  return `<div class="chip rchip st-${st}" draggable="true" data-id="${r.id}" data-st="${st}"><span class="st">${ST_ICON[st]}</span>${esc(r.name)}</div>`;
+}
+
+function roomsSection(rows, caps) {
+  const by = {};
+  rows.forEach((r) => {
+    const k = r.room && ROOMS.has(r.room) ? r.room : "";
+    (by[k] = by[k] || []).push(r);
+  });
+  const counts = { yes: 0, none: 0, no: 0 };
+  rows.forEach((r) => counts[rsvpState(r)]++);
+
+  const pool = by[""] || [];
+  const groups = [
+    ["yes", "✅ Coming"],
+    ["none", "⏳ No response yet"],
+    ["no", "❌ Not coming"],
+  ]
+    .map(([st, label]) => {
+      const list = pool.filter((r) => rsvpState(r) === st);
+      return `<div class="pool-group pg-${st}"><h4>${label} <span class="pcnt">${list.length}</span></h4>
+        <div class="dropzone rzone" data-room="" data-st="${st}">${list.map(roomChip).join("")}</div></div>`;
+    })
+    .join("");
+
+  const bldgs = BUILDINGS.map((b) => {
+    let used = 0;
+    let total = 0;
+    const rooms = b.rooms
+      .map((rm) => {
+        const cap = rm.kind === "bunk" && caps[rm.key] === 4 ? 4 : ROOM_CAP;
+        const list = by[rm.key] || [];
+        used += list.length;
+        total += cap;
+        const btn =
+          rm.kind === "bunk"
+            ? `<button type="button" class="cap-btn" data-room="${rm.key}" data-cap="${cap === 4 ? 2 : 4}">${cap === 4 ? "− Back to 2" : "+ Add 3rd &amp; 4th"}</button>`
+            : "";
+        return `<div class="room ${rm.kind}${list.length >= cap ? " full" : ""}" data-room="${rm.key}" data-cap="${cap}">
+          <div class="room-head"><span class="room-name">${rm.kind === "bunk" ? "🛏️🛏️" : "🛏️"} ${esc(rm.label)}</span><span class="cnt">${list.length}/${cap}</span></div>
+          <div class="dropzone rzone" data-room="${rm.key}">${list.map(roomChip).join("")}</div>${btn}
+        </div>`;
+      })
+      .join("");
+    return `<div class="bldg" data-bldg="${b.id}">
+      <h3>🏠 ${esc(b.name)} <span class="cnt bcnt">${used}/${total}</span></h3>
+      <div class="room-grid">${rooms}</div>
+    </div>`;
+  }).join("");
+
+  return `<section class="card" id="rooms-card">
+      <h2><span class="medal">🛏️</span> Room Assignments</h2>
+      <p class="hint">Drag names into rooms (on your phone: press and hold, then drag). Up to ${ROOM_CAP} per room &mdash; bunk rooms can open a 3rd &amp; 4th spot. Drag a name back to <b>Unassigned</b> to take them out. Saves automatically.</p>
+      <div class="legend">
+        <span class="lg st-yes">✅ Coming <b>${counts.yes}</b></span>
+        <span class="lg st-none">⏳ No response <b>${counts.none}</b></span>
+        <span class="lg st-no">❌ Not coming <b>${counts.no}</b></span>
+      </div>
+      <div class="rooms" id="rooms">
+        <div class="room-pool">
+          <h3>Unassigned <span class="cnt pool-cnt">${pool.length}</span></h3>
+          ${groups}
+        </div>
+        ${bldgs}
+      </div>
+      <p class="board-msg" id="rooms-msg" role="status" aria-live="polite"></p>
+    </section>`;
+}
+
+function render(rows, todos, gameIdeas, roomCaps = {}) {
   let invited = rows.length;
   let responded = 0;
   let coming = 0;
@@ -183,6 +268,7 @@ function render(rows, todos, gameIdeas) {
         <td>${arrive}</td>
         <td>${depart}</td>
         <td>${team}</td>
+        <td class="room-cell">${r.room && ROOMS.has(r.room) ? esc(ROOMS.get(r.room).building.replace("Building ", "B") + " · " + ROOMS.get(r.room).label) : "—"}</td>
         <td class="contact">${email}</td>
         <td class="contact">${phone}</td>
         <td>${esc(r.note) || ""}</td>
@@ -280,6 +366,44 @@ function render(rows, todos, gameIdeas) {
       border-radius: 0.8rem; padding: 0.6rem 0.8rem; }
     .todo-text { flex: 1; font-weight: 500; }
     .todo.done .todo-text { text-decoration: line-through; color: #8aa0ad; }
+    /* Room assignments */
+    .legend { display: flex; flex-wrap: wrap; gap: 0.5rem; margin-bottom: 1rem; }
+    .legend .lg { border-radius: 999px; padding: 0.3rem 0.8rem; font-weight: 600; font-size: 0.88rem; border: 2px solid; }
+    .legend b { margin-left: 0.2rem; }
+    .rooms { display: flex; flex-direction: column; gap: 1rem; }
+    .room-pool { background: #eef6fb; border-radius: 1rem; padding: 0.8rem; }
+    .room-pool h3, .bldg h3 { font-size: 1.05rem; color: var(--ocean-deep); margin-bottom: 0.6rem; display: flex; justify-content: space-between; align-items: center; }
+    .room-pool .cnt, .bldg .cnt, .room .cnt { font-size: 0.82rem; font-weight: 700; color: var(--ocean); background: #fff; border-radius: 0.6rem; padding: 0.1rem 0.5rem; }
+    .pool-group + .pool-group { margin-top: 0.6rem; }
+    .pool-group h4 { font-size: 0.85rem; color: #5b6b76; margin-bottom: 0.35rem; display: flex; gap: 0.4rem; align-items: center; }
+    .pool-group .pcnt { background: #fff; border-radius: 0.5rem; padding: 0 0.4rem; font-size: 0.78rem; }
+    .bldg { background: var(--sand); border-radius: 1rem; padding: 0.8rem; border: 2px solid #f0e2c0; }
+    .room-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 0.6rem; }
+    .room { background: #fff; border-radius: 0.8rem; padding: 0.55rem; border: 2px solid #e3eef4; display: flex; flex-direction: column; gap: 0.4rem; }
+    .room.bunk { border-color: #d9cdf5; background: #fbf9ff; }
+    .room.full .cnt { color: var(--coral); }
+    .room.drag-over, .room:has(.drag-over) { border-color: var(--ocean); background: #dff1fb; }
+    .room.full:has(.drag-over) { border-color: var(--coral); background: #ffe6e3; }
+    .room-head { display: flex; justify-content: space-between; align-items: center; gap: 0.4rem; font-weight: 700; font-size: 0.88rem; }
+    .room .dropzone { min-height: 38px; flex-direction: column; flex-wrap: nowrap; gap: 0.3rem; border-radius: 0.6rem; }
+    .room .dropzone:empty { border: 2px dashed #d8e6ee; }
+    .room-pool .dropzone { min-height: 36px; border-radius: 0.6rem; }
+    .room-pool .dropzone:empty::before { content: "—"; color: #b0bec5; padding: 0.3rem; }
+    .dropzone.drag-over { background: #dff1fb; }
+    .cap-btn { align-self: flex-start; font: inherit; font-size: 0.78rem; font-weight: 600; cursor: pointer;
+      background: none; border: 1.5px dashed #8b7bc8; color: #5b4aa8; border-radius: 999px; padding: 0.15rem 0.6rem; }
+    .cap-btn:disabled { opacity: 0.5; }
+    .rchip .st { font-size: 0.8rem; }
+    .st-yes { border-color: var(--green) !important; }
+    .rchip.st-yes { background: #eafaf0; }
+    .st-none { border-color: #c7d3db !important; color: #6a7f8c; }
+    .rchip.st-none { border-style: dashed; }
+    .st-no { border-color: #f0b4ad !important; color: #a0464f; }
+    .rchip.st-no { background: #fdf1f0; text-decoration: line-through; text-decoration-thickness: 1.5px; }
+    .legend .st-yes { background: #eafaf0; color: #137a3a; }
+    .legend .st-none { background: #f3f6f8; }
+    .legend .st-no { background: #fdf1f0; }
+    .room-cell { white-space: nowrap; font-size: 0.85rem; }
     .todo-check { background: none; border: none; font-size: 1.25rem; cursor: pointer; line-height: 1; color: var(--ocean-deep); }
   </style>
 </head>
@@ -314,18 +438,23 @@ function render(rows, todos, gameIdeas) {
       <div class="wrap-table">
         <table>
           <thead>
-            <tr><th>Name</th><th>Status</th><th>Competing</th><th>Arrive</th><th>Leave</th><th>Team</th><th>Email</th><th>Phone</th><th>Note</th><th>Game Ideas</th><th>Updated</th><th></th></tr>
+            <tr><th>Name</th><th>Status</th><th>Competing</th><th>Arrive</th><th>Leave</th><th>Team</th><th>Room</th><th>Email</th><th>Phone</th><th>Note</th><th>Game Ideas</th><th>Updated</th><th></th></tr>
           </thead>
-          <tbody>${body || '<tr><td colspan="12">No guests yet — add some above.</td></tr>'}</tbody>
+          <tbody>${body || '<tr><td colspan="13">No guests yet — add some above.</td></tr>'}</tbody>
         </table>
       </div>
     </section>
+
+    ${roomsSection(rows, roomCaps)}
   </main>
 
   <script>
     const CAP = ${CAP};
     const board = document.getElementById("board");
     const msg = document.getElementById("board-msg");
+    const rooms = document.getElementById("rooms");
+    const roomsMsg = document.getElementById("rooms-msg");
+    const ROOTS = [board, rooms].filter(Boolean);
     let dragId = null;
     let dragEl = null;
 
@@ -364,21 +493,24 @@ function render(rows, todos, gameIdeas) {
       });
     }
 
-    board.addEventListener("dragstart", (e) => {
-      const chip = e.target.closest(".chip");
-      if (!chip) return;
-      dragId = chip.dataset.id;
-      dragEl = chip;
-      chip.classList.add("dragging");
-      e.dataTransfer.effectAllowed = "move";
-    });
-    board.addEventListener("dragend", () => {
-      if (dragEl) dragEl.classList.remove("dragging");
-      dragId = null; dragEl = null;
-      board.querySelectorAll(".drag-over").forEach((c) => c.classList.remove("drag-over"));
+    ROOTS.forEach((root) => {
+      root.addEventListener("dragstart", (e) => {
+        const chip = e.target.closest(".chip");
+        if (!chip) return;
+        dragId = chip.dataset.id;
+        dragEl = chip;
+        chip.classList.add("dragging");
+        e.dataTransfer.effectAllowed = "move";
+        e.dataTransfer.setData("text/plain", chip.dataset.id);
+      });
+      root.addEventListener("dragend", () => {
+        if (dragEl) dragEl.classList.remove("dragging");
+        dragId = null; dragEl = null;
+        document.querySelectorAll(".drag-over").forEach((c) => c.classList.remove("drag-over"));
+      });
     });
 
-    board.querySelectorAll(".dropzone").forEach((zone) => {
+    document.querySelectorAll("#board .dropzone, #rooms .dropzone").forEach((zone) => {
       zone.addEventListener("dragover", (e) => { e.preventDefault(); zone.classList.add("drag-over"); });
       zone.addEventListener("dragleave", () => zone.classList.remove("drag-over"));
       zone.addEventListener("drop", (e) => {
@@ -388,7 +520,15 @@ function render(rows, todos, gameIdeas) {
       });
     });
 
-    async function dropInto(zone) {
+    // Route a drop to the board the zone belongs to (names can't jump between boards).
+    function dropInto(zone) {
+      if (!dragEl) return Promise.resolve();
+      const toRooms = !!zone.closest("#rooms");
+      if (toRooms !== !!dragEl.closest("#rooms")) return Promise.resolve();
+      return toRooms ? roomDrop(zone) : teamDrop(zone);
+    }
+
+    async function teamDrop(zone) {
       if (!dragEl) return;
       const chip = dragEl;
       const id = dragId;
@@ -446,7 +586,88 @@ function render(rows, todos, gameIdeas) {
       }
     }
 
-    // ---- Touch drag: press and hold a name, then drag it to a team ----
+    // ---- Rooms ----
+    function refreshRooms() {
+      if (!rooms) return;
+      rooms.querySelectorAll(".room").forEach((r) => {
+        const n = r.querySelectorAll(".chip").length;
+        const cap = Number(r.dataset.cap);
+        r.querySelector(".cnt").textContent = n + "/" + cap;
+        r.classList.toggle("full", n >= cap);
+      });
+      rooms.querySelectorAll(".bldg").forEach((b) => {
+        let n = 0, cap = 0;
+        b.querySelectorAll(".room").forEach((r) => { n += r.querySelectorAll(".chip").length; cap += Number(r.dataset.cap); });
+        b.querySelector(".bcnt").textContent = n + "/" + cap;
+      });
+      rooms.querySelectorAll(".pool-group").forEach((g) => {
+        g.querySelector(".pcnt").textContent = g.querySelectorAll(".chip").length;
+      });
+      rooms.querySelector(".pool-cnt").textContent = rooms.querySelectorAll(".room-pool .chip").length;
+    }
+
+    async function roomDrop(zone) {
+      const chip = dragEl;
+      if (!chip) return;
+      const room = zone.dataset.room || null;
+      // Back to Unassigned: file the name under its RSVP status group.
+      const target = room ? zone : rooms.querySelector('.room-pool .dropzone[data-st="' + chip.dataset.st + '"]');
+      if (!target || chip.parentNode === target) return;
+      if (room) {
+        const roomEl = zone.closest(".room");
+        const cap = Number(roomEl.dataset.cap);
+        if (zone.querySelectorAll(".chip").length >= cap) {
+          flash(roomEl.querySelector(".room-name").textContent.trim() + " is full (" + cap + " max)", roomsMsg);
+          return;
+        }
+      }
+      const prevParent = chip.parentNode;
+      target.appendChild(chip);
+      refreshRooms();
+      roomsMsg.textContent = "";
+      try {
+        const res = await fetch("/api/room", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ id: Number(chip.dataset.id), room: room }),
+        });
+        const data = await res.json().catch(() => ({}));
+        if (!res.ok || !data.ok) throw new Error(data.error || "Failed");
+      } catch (err) {
+        prevParent.appendChild(chip);
+        refreshRooms();
+        flash(err.message || "Couldn't save — try again", roomsMsg);
+      }
+    }
+
+    if (rooms) {
+      rooms.addEventListener("click", async (e) => {
+        const btn = e.target.closest(".cap-btn");
+        if (!btn) return;
+        const roomEl = btn.closest(".room");
+        const cap = Number(btn.dataset.cap);
+        btn.disabled = true;
+        try {
+          const res = await fetch("/api/room", {
+            method: "POST",
+            headers: { "content-type": "application/json" },
+            body: JSON.stringify({ action: "cap", room: btn.dataset.room, cap: cap }),
+          });
+          const data = await res.json().catch(() => ({}));
+          if (!res.ok || !data.ok) throw new Error(data.error || "Failed");
+          roomEl.dataset.cap = String(data.cap);
+          btn.dataset.cap = data.cap === 4 ? "2" : "4";
+          btn.textContent = data.cap === 4 ? "− Back to 2" : "+ Add 3rd & 4th";
+          refreshRooms();
+        } catch (err) {
+          flash(err.message || "Couldn't save — try again", roomsMsg);
+        } finally {
+          btn.disabled = false;
+        }
+      });
+    }
+
+    // ---- Touch drag: press and hold a name, then drag it to a team or room ----
     const HOLD_MS = 220;
     let touch = null; // { chip, ghost, timer, startX, startY, active, x, y, zone }
 
@@ -455,6 +676,11 @@ function render(rows, todos, gameIdeas) {
       if (!el) return null;
       const z = el.closest(".dropzone");
       if (z) return z;
+      // Anywhere on a room card counts as that room; anywhere on Unassigned counts as Unassigned.
+      const room = el.closest(".room");
+      if (room) return room.querySelector(".dropzone");
+      const pool = el.closest(".room-pool");
+      if (pool) return pool.querySelector(".dropzone");
       // Anywhere else on a team card counts as its roster.
       const col = el.closest(".team-col");
       return col ? col.querySelector(".dropzone.members") || col.querySelector(".dropzone") : null;
@@ -468,7 +694,7 @@ function render(rows, todos, gameIdeas) {
       t.chip.classList.add("dragging");
       const r = t.chip.getBoundingClientRect();
       const g = t.chip.cloneNode(true);
-      g.className = "chip drag-ghost" + (t.chip.classList.contains("captain") ? " captain" : "");
+      g.className = t.chip.className.replace("dragging", "") + " drag-ghost";
       g.style.width = r.width + "px";
       document.body.appendChild(g);
       t.ghost = g;
@@ -516,13 +742,13 @@ function render(rows, todos, gameIdeas) {
     }
     function clearDrag() { dragEl = null; dragId = null; }
 
-    board.addEventListener("pointerdown", (e) => {
+    ROOTS.forEach((root) => root.addEventListener("pointerdown", (e) => {
       if (e.pointerType === "mouse") return; // mouse uses native drag & drop
       const chip = e.target.closest(".chip");
       if (!chip) return;
       touch = { chip, startX: e.clientX, startY: e.clientY, x: e.clientX, y: e.clientY, active: false, zone: null };
       touch.timer = setTimeout(() => { if (touch) { startTouchDrag(); autoScroll(); } }, HOLD_MS);
-    });
+    }));
 
     document.addEventListener("pointermove", (e) => {
       if (!touch) return;
@@ -543,11 +769,12 @@ function render(rows, todos, gameIdeas) {
     // Block page scrolling while a name is being dragged.
     document.addEventListener("touchmove", (e) => { if (touch && touch.active) e.preventDefault(); }, { passive: false });
     document.addEventListener("touchend", () => { if (touch && touch.active) endTouch(true); });
-    board.addEventListener("contextmenu", (e) => { if (e.target.closest(".chip")) e.preventDefault(); });
+    ROOTS.forEach((root) => root.addEventListener("contextmenu", (e) => { if (e.target.closest(".chip")) e.preventDefault(); }));
 
-    function flash(text) {
-      msg.textContent = text;
-      setTimeout(() => { if (msg.textContent === text) msg.textContent = ""; }, 3000);
+    function flash(text, el) {
+      el = el || msg;
+      el.textContent = text;
+      setTimeout(() => { if (el.textContent === text) el.textContent = ""; }, 3000);
     }
   </script>
 </body>

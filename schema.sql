@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS guests (
   is_captain INTEGER NOT NULL DEFAULT 0,    -- 1 if this guest is their team's captain
   email      TEXT,                          -- optional
   phone      TEXT,                          -- optional
+  room       TEXT,                          -- room key from lib/rooms.js, or NULL
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
 );
 CREATE INDEX IF NOT EXISTS idx_guests_name_key ON guests(name_key);
@@ -41,4 +42,10 @@ CREATE TABLE IF NOT EXISTS game_ideas (
   text       TEXT NOT NULL,
   done       INTEGER NOT NULL DEFAULT 0,
   created_at TEXT NOT NULL DEFAULT (datetime('now'))
+);
+
+-- Bunk rooms that have been opened up to 4 people (default is 2)
+CREATE TABLE IF NOT EXISTS room_caps (
+  room TEXT PRIMARY KEY,
+  cap  INTEGER NOT NULL
 );
